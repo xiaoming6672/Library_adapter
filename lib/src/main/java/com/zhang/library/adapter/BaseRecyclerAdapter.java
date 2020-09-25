@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
  *
  * @author ZhangXiaoMing 2020-01-04 9:44 星期六
  */
-public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<BaseRecyclerViewHolder>
+public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRecyclerViewHolder>
         implements Adapter<T> {
 
     protected final String TAG = getClass().getSimpleName();
