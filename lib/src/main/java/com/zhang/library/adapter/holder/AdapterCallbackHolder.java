@@ -24,10 +24,16 @@ public class AdapterCallbackHolder<T> {
     }
 
     public void notifyItemClick(View view, T model, int position) {
+        if (mOnItemClickCallback == null) {
+            return;
+        }
         mOnItemClickCallback.onItemClick(view, model, position);
     }
 
     public boolean notifyItemLongClick(View view, T model, int position) {
+        if (mOnItemLongClickCallback == null) {
+            return false;
+        }
         return mOnItemLongClickCallback.onItemLongClick(view, model, position);
     }
 }

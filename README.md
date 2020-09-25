@@ -18,3 +18,10 @@ Step 2. Add the dependency
 	dependencies {
 	        implementation 'com.github.xiaoming6672:Library_adapter:1.0.0'
 	}
+
+
+v1.0.0
+    添加通用的ListView、RecyclerView的适配器
+
+v1.0.1
+    添加能适配多种ViewHolder的RecyclerView的适配器
