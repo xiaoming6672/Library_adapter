@@ -25,3 +25,6 @@ v1.0.0
 
 v1.0.1
     添加能适配多种ViewHolder的RecyclerView的适配器
+
+v1.0.2
+    BaseRecyclerAdapter添加Header、Footer功能

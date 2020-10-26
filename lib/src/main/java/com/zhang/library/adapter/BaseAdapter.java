@@ -9,7 +9,7 @@ import com.zhang.library.adapter.callback.SelectManager;
 import com.zhang.library.adapter.holder.AdapterCallbackHolder;
 import com.zhang.library.adapter.holder.AdapterDataHolder;
 import com.zhang.library.adapter.holder.SelectManagerHolder;
-import com.zhang.library.adapter.viewholder.BaseViewHolder;
+import com.zhang.library.adapter.viewholder.base.BaseViewHolder;
 
 import java.util.List;
 

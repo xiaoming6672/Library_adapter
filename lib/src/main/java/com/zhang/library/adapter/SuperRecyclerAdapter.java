@@ -5,8 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.zhang.library.adapter.annotation.ASuperViewHolder;
-import com.zhang.library.adapter.viewholder.BaseRecyclerViewHolder;
-import com.zhang.library.adapter.viewholder.SuperViewHolder;
+import com.zhang.library.adapter.viewholder.base.BaseRecyclerViewHolder;
+import com.zhang.library.adapter.viewholder.base.SuperViewHolder;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -44,9 +44,10 @@ public class SuperRecyclerAdapter<T> extends BaseRecyclerAdapter<T> {
         return getViewHolder(parent, (Class<T>) clazz);
     }
 
+
     @Override
-    protected void onBindData(BaseRecyclerViewHolder viewHolder, T data, int position) {
-        SuperViewHolder holder = (SuperViewHolder) viewHolder;
+    protected void onBindData(BaseRecyclerViewHolder<T> viewHolder, T data, int position) {
+        SuperViewHolder<T> holder = (SuperViewHolder<T>) viewHolder;
         holder.onBindData(data, position);
     }
 
