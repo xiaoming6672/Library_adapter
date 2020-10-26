@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.zhang.library.adapter.annotation.ASuperViewHolder;
-import com.zhang.library.adapter.viewholder.SuperViewHolder;
+import com.zhang.library.adapter.viewholder.base.SuperViewHolder;
 import com.zhang.library.library_adapter.R;
 import com.zhang.library.library_adapter.model.Model_A;
 
