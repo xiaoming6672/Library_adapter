@@ -12,7 +12,7 @@ import com.zhang.library.adapter.viewholder.HeaderViewHolder;
 import com.zhang.library.adapter.viewholder.base.BaseRecyclerViewHolder;
 import com.zhang.library.library_adapter.R;
 import com.zhang.library.library_adapter.model.Model_A;
-import com.zhang.library.utils.utils.LogUtils;
+import com.zhang.library.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
