@@ -13,7 +13,7 @@ import com.zhang.library.adapter.viewholder.FooterViewHolder;
 import com.zhang.library.adapter.viewholder.HeaderViewHolder;
 import com.zhang.library.adapter.viewholder.base.BaseRecyclerViewHolder;
 import com.zhang.library.common.view.BaseAppView;
-import com.zhang.library.utils.utils.CollectionUtils;
+import com.zhang.library.utils.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;

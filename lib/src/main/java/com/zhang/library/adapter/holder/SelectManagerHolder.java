@@ -3,7 +3,7 @@ package com.zhang.library.adapter.holder;
 import com.zhang.library.adapter.Adapter;
 import com.zhang.library.adapter.callback.DataHolder;
 import com.zhang.library.adapter.callback.SelectManager;
-import com.zhang.library.utils.utils.CollectionUtils;
+import com.zhang.library.utils.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
