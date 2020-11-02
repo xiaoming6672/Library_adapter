@@ -4,7 +4,7 @@ import android.view.View;
 
 import com.zhang.library.adapter.callback.OnItemClickCallback;
 import com.zhang.library.adapter.callback.OnItemLongClickCallback;
-import com.zhang.library.utils.utils.CollectionUtils;
+import com.zhang.library.utils.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
