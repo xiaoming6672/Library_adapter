@@ -57,7 +57,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
     protected T getItemData(int position) {
         if (isDataPosition(position)) {
-            return getDataHolder().getData(position);
+            return getDataHolder().getData(getRealPosition(position));
         }
         return null;
     }
@@ -313,6 +313,28 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 //        return hasFooterView() && position >= (getHeaderCount() + getDataHolder().size());
     }
 
+    /**
+     * 获取当前item的position在对应的数据模块中的真实位置。
+     * <p>
+     * 如果当前position属于头部数据，返回头部position
+     * <p>
+     * 如果当前position属于实际数据，返回数据position
+     * <p>
+     * 如果当前position属于尾部数据，返回尾部position
+     *
+     * @param position 当前item的position
+     */
+    protected int getRealPosition(int position) {
+        if (isHeaderPosition(position)) {
+            return position;
+        }
+        if (isFooterPosition(position)) {
+            return position - getHeaderCount() - getDataHolder().size();
+        }
+
+        return position - getHeaderCount();
+    }
+
     protected HeaderViewHolder<T> getHeader(int viewType) {
         int index = Math.abs(viewType) - 1;
         return CollectionUtils.get(mHeaderList, index);
@@ -359,16 +381,9 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
     @Override
     public void onBindViewHolder(@NonNull final BaseRecyclerViewHolder<T> viewHolder, final int position) {
+        final int realPosition = getRealPosition(position);
         if (viewHolder instanceof HeaderViewHolder || viewHolder instanceof FooterViewHolder) {
             viewHolder.setAdapter(this);
-
-            //相对于Header或者Footer的真实位置
-            int realPosition;
-            if (viewHolder instanceof HeaderViewHolder) {
-                realPosition = position;
-            } else {
-                realPosition = position - getHeaderCount() - getDataHolder().size();
-            }
 
             viewHolder.onBindData(null, realPosition);
             return;
@@ -376,20 +391,20 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
         final T data = getItemData(position);
         viewHolder.setAdapter(this);
-        viewHolder.onBindData(data, position);
-        onBindData(viewHolder, data, position);
+        viewHolder.onBindData(data, realPosition);
+        onBindData(viewHolder, data, realPosition);
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getCallbackHolder().notifyItemClick(view, data, position);
+                getCallbackHolder().notifyItemClick(view, data, realPosition);
             }
         });
 
         viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                return getCallbackHolder().notifyItemLongClick(v, data, position);
+                return getCallbackHolder().notifyItemLongClick(v, data, realPosition);
             }
         });
     }
