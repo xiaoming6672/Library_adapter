@@ -12,7 +12,6 @@ import com.zhang.library.adapter.holder.SelectManagerHolder;
 import com.zhang.library.adapter.viewholder.FooterViewHolder;
 import com.zhang.library.adapter.viewholder.HeaderViewHolder;
 import com.zhang.library.adapter.viewholder.base.BaseRecyclerViewHolder;
-import com.zhang.library.common.view.BaseAppView;
 import com.zhang.library.utils.CollectionUtils;
 
 import java.util.ArrayList;
@@ -68,7 +67,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
      *
      * @param header 头部View
      */
-    public void addHeader(BaseAppView header) {
+    public void addHeader(View header) {
         if (header == null) {
             return;
         }
@@ -123,7 +122,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
      *
      * @param header 头部View
      */
-    public void removeHeader(BaseAppView header) {
+    public void removeHeader(View header) {
         if (header == null || CollectionUtils.isEmpty(mHeaderList)) {
             return;
         }
@@ -145,7 +144,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
      *
      * @param header 头部ViewHolder
      */
-    public void removeHeader(HeaderViewHolder<BaseAppView> header) {
+    public void removeHeader(HeaderViewHolder<View> header) {
         if (header == null || CollectionUtils.isEmpty(mHeaderList)) {
             return;
         }
@@ -171,7 +170,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
      *
      * @param footer 底部View
      */
-    public void addFooter(BaseAppView footer) {
+    public void addFooter(View footer) {
         if (footer == null) {
             return;
         }
@@ -226,7 +225,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
      *
      * @param footer 底部View
      */
-    public void removeFooter(BaseAppView footer) {
+    public void removeFooter(View footer) {
         if (footer == null || CollectionUtils.isEmpty(mFooterList)) {
             return;
         }
@@ -248,7 +247,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
      *
      * @param footer 底部ViewHolder
      */
-    public void removeFooter(FooterViewHolder<BaseAppView> footer) {
+    public void removeFooter(FooterViewHolder<View> footer) {
         if (footer == null || CollectionUtils.isEmpty(mFooterList)) {
             return;
         }
