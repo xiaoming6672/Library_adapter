@@ -63,8 +63,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 LogUtils.info(getClass().getSimpleName(), "headerCount = " + headerCount);
                 for (int i = 0; i < headerCount; i++) {
                     View view = LayoutInflater.from(this).inflate(R.layout.item_view_b, ((ViewGroup) rv_content.getParent()), false);
-                    Header holder = new Header(view);
-                    adapter.addHeader(holder);
+                    adapter.addHeader(view);
+//                    Header holder = new Header(view);
+//                    adapter.addHeader(holder);
                 }
                 break;
             }
