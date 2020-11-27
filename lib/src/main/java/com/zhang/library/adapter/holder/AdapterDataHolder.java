@@ -60,7 +60,7 @@ public class AdapterDataHolder<T> implements DataHolder<T> {
             this.mDataList = transformData(dataList);
         }
 
-        ArrayList<T> list = new ArrayList<>(dataList);
+        ArrayList<T> list = new ArrayList<>(mDataList);
         ListIterator<DataChangeCallback<T>> listIterator = getDataChangeCallbackListIterator();
         while (listIterator.hasNext()) {
             listIterator.next().onDataChanged(list);
