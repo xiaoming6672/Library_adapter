@@ -144,7 +144,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
      *
      * @param header 头部ViewHolder
      */
-    public void removeHeader(HeaderViewHolder<View> header) {
+    public void removeHeader(HeaderViewHolder<T> header) {
         if (header == null || CollectionUtils.isEmpty(mHeaderList)) {
             return;
         }
@@ -247,7 +247,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
      *
      * @param footer 底部ViewHolder
      */
-    public void removeFooter(FooterViewHolder<View> footer) {
+    public void removeFooter(FooterViewHolder<T> footer) {
         if (footer == null || CollectionUtils.isEmpty(mFooterList)) {
             return;
         }
