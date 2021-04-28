@@ -29,6 +29,8 @@ public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.Data
     public SelectManagerHolder(Adapter<T> adapter) {
         this.mAdapter = adapter;
         this.mAdapter.getDataHolder().addDataChangeCallback(this);
+
+        this.mList = new ArrayList<>();
     }
 
     @Override
