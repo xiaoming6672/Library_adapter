@@ -370,10 +370,17 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         setContext(parent.getContext());
 
         if (isHeaderViewType(viewType)) {
-            return getHeader(viewType);
+            HeaderViewHolder<T> headerHolder = getHeader(viewType);
+
+            if (headerHolder != null)
+                return headerHolder;
         }
+
         if (isFooterViewType(viewType)) {
-            return getFooter(viewType);
+            FooterViewHolder<T> footerHolder = getFooter(viewType);
+
+            if (footerHolder != null)
+                return footerHolder;
         }
 
         return onCreateVHolder(parent, viewType);
