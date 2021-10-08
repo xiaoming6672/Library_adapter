@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zhang.library.adapter.BaseRecyclerAdapter;
 import com.zhang.library.adapter.viewholder.FooterViewHolder;
@@ -12,6 +13,7 @@ import com.zhang.library.adapter.viewholder.HeaderViewHolder;
 import com.zhang.library.adapter.viewholder.base.BaseRecyclerViewHolder;
 import com.zhang.library.library_adapter.R;
 import com.zhang.library.library_adapter.model.Model_A;
+import com.zhang.library.library_adapter.viewholder.EmptyHolder;
 import com.zhang.library.utils.LogUtils;
 
 import java.util.ArrayList;
@@ -40,12 +42,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rv_content.setLayoutManager(new LinearLayoutManager(this));
 
         adapter = new HeaderTestAdapter();
+        adapter.addEmptyViewHolder(new EmptyHolder(rv_content));
+
         rv_content.setAdapter(adapter);
 
         Random random = new Random();
 
         List<Model_A> list = new ArrayList<>();
-        for (int i = 0; i < random.nextInt(10) + 1; i++) {
+        for (int i = 0; i < random.nextInt(2); i++) {
             Model_A a = new Model_A();
             a.value = i;
             list.add(a);
@@ -57,23 +61,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.btn_data_add:
+                Model_A data = new Model_A();
+                data.value = new Random().nextInt(100);
+                adapter.getDataHolder().addData(data);
+                break;
+            case R.id.btn_data_reduce:
+                int size = adapter.getDataHolder().size();
+                if (size > 0) {
+                    adapter.getDataHolder().removeData(size - 1);
+                } else {
+                    Toast.makeText(this, "没有数据了", Toast.LENGTH_SHORT).show();
+                }
+                break;
             case R.id.btn_add_header: {
                 Random random = new Random();
                 int headerCount = random.nextInt(5);
+                headerCount = 1;
                 LogUtils.info(getClass().getSimpleName(), "headerCount = " + headerCount);
                 for (int i = 0; i < headerCount; i++) {
                     View view = LayoutInflater.from(this).inflate(R.layout.item_view_b, ((ViewGroup) rv_content.getParent()), false);
-                    adapter.addHeader(view);
-//                    Header holder = new Header(view);
-//                    adapter.addHeader(holder);
+//                    adapter.addHeader(view);
+                    Header holder = new Header(view);
+                    adapter.addHeader(holder);
                 }
                 break;
             }
             case R.id.btn_add_footer: {
                 Random random = new Random();
-                int headerCount = random.nextInt(5);
-                LogUtils.debug(getClass().getSimpleName(), "footCount = " + headerCount);
-                for (int i = 0; i < headerCount; i++) {
+                int footerCount = random.nextInt(5);
+                footerCount = 1;
+                LogUtils.debug(getClass().getSimpleName(), "footCount = " + footerCount);
+                for (int i = 0; i < footerCount; i++) {
                     View view = LayoutInflater.from(this).inflate(R.layout.item_view_b, ((ViewGroup) rv_content.getParent()), false);
                     Footer holder = new Footer(view);
                     adapter.addFooter(holder);
@@ -155,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onBindData(Model_A item, int position) {
-                tv_text.setText("Data：" + position);
+                tv_text.setText("Data：position = " + position);
             }
         }
     }
