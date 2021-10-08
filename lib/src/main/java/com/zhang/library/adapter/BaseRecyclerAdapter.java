@@ -9,6 +9,7 @@ import com.zhang.library.adapter.callback.SelectManager;
 import com.zhang.library.adapter.holder.AdapterCallbackHolder;
 import com.zhang.library.adapter.holder.AdapterDataHolder;
 import com.zhang.library.adapter.holder.SelectManagerHolder;
+import com.zhang.library.adapter.viewholder.EmptyViewHolder;
 import com.zhang.library.adapter.viewholder.FooterViewHolder;
 import com.zhang.library.adapter.viewholder.HeaderViewHolder;
 import com.zhang.library.adapter.viewholder.base.BaseRecyclerViewHolder;
@@ -31,8 +32,10 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
     /** data数据的ViewType */
     protected final int VIEW_TYPE_NORMAL_DATA = 0;
+    /** 列表没有数据 */
+    protected final int VIEW_TYPE_EMPTY_DATA = -1;
     /** HeaderView的基础ViewType */
-    protected final int VIEW_TYPE_HEADER_BASE = -1;
+    protected final int VIEW_TYPE_HEADER_BASE = -2;
     /** FooterView的基础ViewType */
     protected final int VIEW_TYPE_FOOTER_BASE = 1;
 
@@ -44,6 +47,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
     private AdapterCallbackHolder<T> mCallbackHolder;
     private SelectManager<T> mSelectManager;
 
+    private EmptyViewHolder<T> mEmptyHolder;
     private List<HeaderViewHolder<T>> mHeaderList;
     private List<FooterViewHolder<T>> mFooterList;
 
@@ -60,6 +64,34 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
             return getDataHolder().getData(getRealPosition(position));
         }
         return null;
+    }
+
+    /**
+     * 添加空数据展示ViewHolder
+     *
+     * @param emptyView 空数据view
+     */
+    public void addEmptyViewHolder(View emptyView) {
+        if (emptyView == null)
+            return;
+
+        mEmptyHolder = new EmptyViewHolder<>(emptyView);
+
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 添加空数据展示ViewHolder
+     *
+     * @param holder 空数据ViewHolder
+     */
+    public void addEmptyViewHolder(EmptyViewHolder<T> holder) {
+        if (holder == null)
+            return;
+
+        mEmptyHolder = holder;
+
+        notifyDataSetChanged();
     }
 
     /**
@@ -284,33 +316,43 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         return CollectionUtils.getSize(mFooterList);
     }
 
+    /** 列表无数据 */
+    protected boolean isEmptyViewType(int viewType) {
+        return viewType == VIEW_TYPE_EMPTY_DATA;
+    }
+
+    /** 头部HeaderView */
     protected boolean isHeaderViewType(int viewType) {
         int headerCount = getHeaderCount();
         return VIEW_TYPE_HEADER_BASE - headerCount <= viewType && viewType <= VIEW_TYPE_HEADER_BASE;
     }
 
+    /** 底部FooterView */
     protected boolean isFooterViewType(int viewType) {
         int footerCount = getFooterCount();
         return VIEW_TYPE_FOOTER_BASE <= viewType && viewType <= VIEW_TYPE_FOOTER_BASE + footerCount;
     }
 
+    /** position位置是否是在HeaderView范围 */
     protected boolean isHeaderPosition(int position) {
         return hasHeaderView() && position < getHeaderCount();
     }
 
+    /** position位置是否是数据范围 */
     protected boolean isDataPosition(int position) {
         if (hasHeaderView()) {
             int headerCount = getHeaderCount();
             int realPosition = position - headerCount;
 
-            return 0 <= realPosition && realPosition < getDataHolder().size();
+            return 0 <= realPosition && realPosition < getDataCount();
         }
-        return position < getDataHolder().size();
+        return position < getDataCount();
     }
 
+    /** position是否在FooterView范围 */
     protected boolean isFooterPosition(int position) {
         return !isHeaderPosition(position) && !isDataPosition(position);
-//        return hasFooterView() && position >= (getHeaderCount() + getDataHolder().size());
+//        return hasFooterView() && position >= (getHeaderCount() + getDataCount());
     }
 
     /**
@@ -329,14 +371,14 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
             return position;
         }
         if (isFooterPosition(position)) {
-            return position - getHeaderCount() - getDataHolder().size();
+            return position - getHeaderCount() - getDataCount();
         }
 
         return position - getHeaderCount();
     }
 
     protected HeaderViewHolder<T> getHeader(int viewType) {
-        int index = Math.abs(viewType) - 1;
+        int index = Math.abs(viewType) - Math.abs(VIEW_TYPE_HEADER_BASE);
         return CollectionUtils.get(mHeaderList, index);
     }
 
@@ -344,11 +386,22 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         return CollectionUtils.get(mFooterList, viewType - 1);
     }
 
+    /** 列表数据是否为空 */
+    protected boolean isDataEmpty() {
+        return getDataHolder().size() == 0;
+    }
+
+    /** 获取数据列表数量 */
+    protected int getDataCount() {
+        return isDataEmpty() ? (mEmptyHolder == null ? 0 : 1) : getDataHolder().size();
+    }
+
     @Override
     public int getItemCount() {
-        int dataSize = getDataHolder().size();
+        int dataSize = getDataCount();
         int headerSize = getHeaderCount();
         int footerSize = getFooterCount();
+
         return dataSize + headerSize + footerSize;
     }
 
@@ -357,11 +410,13 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         if (isHeaderPosition(position)) {
             return VIEW_TYPE_HEADER_BASE - position;
         }
+
         if (isFooterPosition(position)) {
-            int realPosition = position - getHeaderCount() - getDataHolder().size();
+            int realPosition = position - getHeaderCount() - getDataCount();
             return VIEW_TYPE_FOOTER_BASE + realPosition;
         }
-        return VIEW_TYPE_NORMAL_DATA;
+
+        return isDataEmpty() ? VIEW_TYPE_EMPTY_DATA : VIEW_TYPE_NORMAL_DATA;
     }
 
     @NonNull
@@ -382,6 +437,9 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
             if (footerHolder != null)
                 return footerHolder;
         }
+
+        if (isEmptyViewType(viewType))
+            return mEmptyHolder;
 
         return onCreateVHolder(parent, viewType);
     }
