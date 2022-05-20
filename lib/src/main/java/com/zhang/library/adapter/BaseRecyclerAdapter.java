@@ -33,11 +33,11 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
     /** data数据的ViewType */
     protected final int VIEW_TYPE_NORMAL_DATA = 0;
     /** 列表没有数据 */
-    protected final int VIEW_TYPE_EMPTY_DATA = -1;
+    protected final int VIEW_TYPE_EMPTY_DATA = -0x100;
     /** HeaderView的基础ViewType */
-    protected final int VIEW_TYPE_HEADER_BASE = -2;
+    protected final int VIEW_TYPE_HEADER_BASE = -0x101;
     /** FooterView的基础ViewType */
-    protected final int VIEW_TYPE_FOOTER_BASE = 1;
+    protected final int VIEW_TYPE_FOOTER_BASE = 0x101;
 
     protected final String TAG = getClass().getSimpleName();
 
@@ -71,7 +71,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
      *
      * @param emptyView 空数据view
      */
-    public void addEmptyViewHolder(View emptyView) {
+    public void setEmptyViewHolder(View emptyView) {
         if (emptyView == null)
             return;
 
@@ -85,11 +85,18 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
      *
      * @param holder 空数据ViewHolder
      */
-    public void addEmptyViewHolder(EmptyViewHolder<T> holder) {
+    public void setEmptyViewHolder(EmptyViewHolder<T> holder) {
         if (holder == null)
             return;
 
         mEmptyHolder = holder;
+
+        notifyDataSetChanged();
+    }
+
+    /** 移除空数据展示ViewHolder */
+    public void removeEmptyViewHolder() {
+        mEmptyHolder = null;
 
         notifyDataSetChanged();
     }

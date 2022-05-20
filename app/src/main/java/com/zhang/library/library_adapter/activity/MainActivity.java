@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rv_content.setLayoutManager(new LinearLayoutManager(this));
 
         adapter = new HeaderTestAdapter();
-        adapter.addEmptyViewHolder(new EmptyHolder(rv_content));
+        adapter.setEmptyViewHolder(new EmptyHolder(rv_content));
 
         rv_content.setAdapter(adapter);
 

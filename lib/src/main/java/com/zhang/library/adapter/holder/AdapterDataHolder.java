@@ -54,11 +54,11 @@ public class AdapterDataHolder<T> implements DataHolder<T> {
 
     @Override
     public void setDataList(List<? extends T> dataList) {
-        if (CollectionUtils.isEmpty(dataList)) {
-            this.mDataList = new ArrayList<>();
-        } else {
-            this.mDataList = transformData(dataList);
-        }
+        if (mDataList == null)
+            mDataList = new ArrayList<>();
+
+        if (!CollectionUtils.isEmpty(dataList))
+            mDataList.addAll(transformData(dataList));
 
         ArrayList<T> list = new ArrayList<>(mDataList);
         ListIterator<DataChangeCallback<T>> listIterator = getDataChangeCallbackListIterator();
