@@ -8,5 +8,5 @@ import android.view.View;
  * @author ZhangXiaoMing 2020-01-04 11:15 星期六
  */
 public interface OnItemLongClickCallback<T> {
-    boolean onItemLongClick(View itemView, T data, int position);
+    boolean onItemLongClick(View view, T data, int position);
 }

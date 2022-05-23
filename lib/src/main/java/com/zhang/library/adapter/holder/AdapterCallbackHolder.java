@@ -97,10 +97,13 @@ public class AdapterCallbackHolder<T> {
             return false;
         }
 
+        boolean handled = false;
         for (OnItemLongClickCallback<T> callback : mOnItemLongClickCallbackList) {
-            callback.onItemLongClick(view, model, position);
+            boolean result = callback.onItemLongClick(view, model, position);
+            if (result)
+                handled = true;
         }
 
-        return true;
+        return handled;
     }
 }

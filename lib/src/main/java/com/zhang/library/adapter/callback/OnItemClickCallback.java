@@ -8,5 +8,5 @@ import android.view.View;
  * @author ZhangXiaoMing 2020-01-04 11:13 星期六
  */
 public interface OnItemClickCallback<T> {
-    void onItemClick(View itemView, T data, int position);
+    void onItemClick(View view, T data, int position);
 }
