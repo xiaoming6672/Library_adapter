@@ -57,6 +57,8 @@ public class AdapterDataHolder<T> implements DataHolder<T> {
         if (mDataList == null)
             mDataList = new ArrayList<>();
 
+        mDataList.clear();
+
         if (!CollectionUtils.isEmpty(dataList))
             mDataList.addAll(transformData(dataList));
 
