@@ -102,7 +102,7 @@ public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.Data
 
     @Override
     public void addItems(int index, List<T> list) {
-        if (CollectionUtils.isEmpty(list) || !CollectionUtils.isIndexLegal(mList, index)) {
+        if (CollectionUtils.isEmpty(list) || index > CollectionUtils.getSize(mList)) {
             return;
         }
 
