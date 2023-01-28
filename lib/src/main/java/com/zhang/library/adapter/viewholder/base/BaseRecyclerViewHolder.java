@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import com.zhang.library.adapter.Adapter;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,7 +24,7 @@ public abstract class BaseRecyclerViewHolder<T> extends RecyclerView.ViewHolder 
         onInit();
     }
 
-    public BaseRecyclerViewHolder(ViewGroup parent, int layoutId) {
+    public BaseRecyclerViewHolder(ViewGroup parent, @LayoutRes int layoutId) {
         this(LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false));
     }
 

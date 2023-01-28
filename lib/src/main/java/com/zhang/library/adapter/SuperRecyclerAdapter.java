@@ -1,10 +1,11 @@
 package com.zhang.library.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.zhang.library.adapter.annotation.ASuperViewHolder;
+import com.zhang.library.adapter.annotation.ISuperViewHolder;
 import com.zhang.library.adapter.viewholder.base.BaseRecyclerViewHolder;
 import com.zhang.library.adapter.viewholder.base.SuperViewHolder;
 
@@ -57,10 +58,10 @@ public class SuperRecyclerAdapter<T> extends BaseRecyclerAdapter<T> {
             return;
         }
 
-        ASuperViewHolder annotation = getAnnotation(clazz);
+        ISuperViewHolder annotation = getAnnotation(clazz);
         int layoutId = annotation.layoutId();
         if (layoutId == 0)
-            throw new IllegalArgumentException(ASuperViewHolder.class.getSimpleName() + "'s layoutId == 0");
+            throw new IllegalArgumentException(ISuperViewHolder.class.getSimpleName() + "'s layoutId == 0");
 
         Type type = getGenericType(clazz);
         if (type == null) {
@@ -86,7 +87,7 @@ public class SuperRecyclerAdapter<T> extends BaseRecyclerAdapter<T> {
         }
     }
 
-    private static <E extends SuperViewHolder> ASuperViewHolder getAnnotation(Class<E> clazz) {
+    private static <E extends SuperViewHolder> ISuperViewHolder getAnnotation(Class<E> clazz) {
         if (clazz == null)
             throw new IllegalArgumentException("clazz is null");
 
@@ -94,7 +95,7 @@ public class SuperRecyclerAdapter<T> extends BaseRecyclerAdapter<T> {
             throw new IllegalArgumentException("clazz must not be " + SuperViewHolder.class.getName());
 
         while (true) {
-            ASuperViewHolder annotation = clazz.getAnnotation(ASuperViewHolder.class);
+            ISuperViewHolder annotation = clazz.getAnnotation(ISuperViewHolder.class);
             if (annotation != null)
                 return annotation;
 
@@ -104,36 +105,66 @@ public class SuperRecyclerAdapter<T> extends BaseRecyclerAdapter<T> {
             clazz = (Class<E>) clazz.getSuperclass();
         }
 
-        throw new IllegalArgumentException(ASuperViewHolder.class.getSimpleName() + " annotation was not found in " + clazz.getName());
+        throw new IllegalArgumentException(ISuperViewHolder.class.getSimpleName() + " annotation was not found in " + clazz.getName());
     }
 
 
     private SuperViewHolder<T> getViewHolder(ViewGroup parent, Class<T> clazz) {
-        Constructor<?> constructor;
-        try {
-            constructor = clazz.getConstructor(View.class);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            constructor = null;
-        }
-        if (constructor == null) {
-            return null;
-        }
-
         Integer layoutId = mViewLayoutIdMap.get(clazz);
         if (layoutId == null || layoutId == 0) {
             return null;
         }
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
+        Constructor<?> constructor = null;
 
-        SuperViewHolder<T> holder = null;
         try {
-            holder = (SuperViewHolder) constructor.newInstance(view);
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            constructor = clazz.getConstructor(ViewGroup.class, int.class);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+
+            Log.e("ZHANG", "getViewHolder()>>>e = " + e.getLocalizedMessage());
+        }
+
+        if (constructor != null) {
+            try {
+                @SuppressWarnings("unchecked")
+                SuperViewHolder<T> holder = (SuperViewHolder<T>) constructor.newInstance(parent, layoutId);
+                return holder;
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            constructor = clazz.getConstructor(View.class);
+        } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-        return holder;
 
+        if (constructor == null)
+            return null;
+
+
+        View view = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
+
+        try {
+            @SuppressWarnings("unchecked")
+            SuperViewHolder<T> holder = (SuperViewHolder<T>) constructor.newInstance(view);
+            return holder;
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
