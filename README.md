@@ -16,9 +16,12 @@ Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        implementation 'com.github.xiaoming6672:Library_adapter:1.0.0'
+	        implementation 'com.github.xiaoming6672:Library_adapter:xxx'
 	}
 
+如果使用SuperRecyclerAdapter，必须在混淆文件中添加混淆声明
+
+	     -keep class * extends com.zhang.library.adapter.viewholder.base.SuperViewHolder {*;}
 
 v1.0.0
     添加通用的ListView、RecyclerView的适配器
