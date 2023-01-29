@@ -12,7 +12,9 @@ import com.zhang.library.adapter.viewholder.FooterViewHolder;
 import com.zhang.library.adapter.viewholder.HeaderViewHolder;
 import com.zhang.library.adapter.viewholder.base.BaseRecyclerViewHolder;
 import com.zhang.library.library_adapter.R;
+import com.zhang.library.library_adapter.adapter.TestAdapter;
 import com.zhang.library.library_adapter.model.Model_A;
+import com.zhang.library.library_adapter.model.Model_B;
 import com.zhang.library.library_adapter.viewholder.EmptyHolder;
 import com.zhang.library.utils.LogUtils;
 
@@ -44,7 +46,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         adapter = new HeaderTestAdapter();
         adapter.setEmptyViewHolder(new EmptyHolder(rv_content));
 
-        rv_content.setAdapter(adapter);
+//        rv_content.setAdapter(adapter);
+
+        TestAdapter testAdapter = new TestAdapter();
+        rv_content.setAdapter(testAdapter);
+
+        List<Object> testList = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            if (i % 2 == 0) {
+                Model_A a = new Model_A();
+                a.value = i;
+
+                testList.add(a);
+            } else {
+                Model_B b = new Model_B();
+                b.value = String.valueOf(System.currentTimeMillis());
+
+                testList.add(b);
+            }
+        }
+        testAdapter.getDataHolder().setDataList(testList);
 
         Random random = new Random();
 
