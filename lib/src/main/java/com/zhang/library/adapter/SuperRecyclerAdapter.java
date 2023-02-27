@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.zhang.library.adapter.annotation.ISuperViewHolder;
+import com.zhang.library.adapter.model.ISuperRecyclerModel;
 import com.zhang.library.adapter.viewholder.base.BaseRecyclerViewHolder;
 import com.zhang.library.adapter.viewholder.base.SuperViewHolder;
 
@@ -23,14 +24,19 @@ import java.util.Map;
  *
  * @author ZhangXiaoMing 2020-08-12 19:10 星期三
  */
-public class SuperRecyclerAdapter<T> extends BaseRecyclerAdapter<T> {
+public class SuperRecyclerAdapter<T>/*<T extends ISuperRecyclerModel>*/
+        extends BaseRecyclerAdapter<T> {
 
-    private Map<Integer, Class<?>> mViewHolderMap = new HashMap<>();
-    private Map<Class<?>, Integer> mViewLayoutIdMap = new HashMap<>();
+    private final Map<Integer, Class<?>> mViewHolderMap = new HashMap<>();
+    private final Map<Class<?>, Integer> mViewLayoutIdMap = new HashMap<>();
 
     @Override
     public int getItemViewType(int position) {
         T data = getDataHolder().getData(position);
+        if (data instanceof ISuperRecyclerModel) {
+            Integer viewType = ((ISuperRecyclerModel) data).getItemViewType();
+            return viewType != null ? viewType : Integer.valueOf(System.identityHashCode(data.getClass()));
+        }
 
         return System.identityHashCode(data.getClass());
     }
@@ -53,7 +59,22 @@ public class SuperRecyclerAdapter<T> extends BaseRecyclerAdapter<T> {
     }
 
 
-    public <T extends SuperViewHolder> void registerViewHolder(Class<T> clazz) {
+    /**
+     * 注册item数据的ViewHolder
+     *
+     * @param clazz ViewHolder
+     */
+    public <VH extends SuperViewHolder> void registerViewHolder(final Class<VH> clazz) {
+        registerViewHolder(clazz, null);
+    }
+
+    /**
+     * 注册item数据的ViewHolder
+     *
+     * @param clazz    ViewHolder
+     * @param viewType viewType
+     */
+    public <VH extends SuperViewHolder> void registerViewHolder(final Class<VH> clazz, final Integer viewType) {
         if (clazz == null) {
             return;
         }
@@ -68,8 +89,8 @@ public class SuperRecyclerAdapter<T> extends BaseRecyclerAdapter<T> {
             return;
         }
 
-        int viewType = System.identityHashCode(type);
-        mViewHolderMap.put(viewType, clazz);
+        int itemViewType = viewType != null ? viewType : System.identityHashCode(type);
+        mViewHolderMap.put(itemViewType, clazz);
         mViewLayoutIdMap.put(clazz, layoutId);
     }
 
@@ -87,7 +108,7 @@ public class SuperRecyclerAdapter<T> extends BaseRecyclerAdapter<T> {
         }
     }
 
-    private static <E extends SuperViewHolder> ISuperViewHolder getAnnotation(Class<E> clazz) {
+    private static <VH extends SuperViewHolder> ISuperViewHolder getAnnotation(Class<VH> clazz) {
         if (clazz == null)
             throw new IllegalArgumentException("clazz is null");
 
@@ -102,7 +123,7 @@ public class SuperRecyclerAdapter<T> extends BaseRecyclerAdapter<T> {
             if (clazz == SuperViewHolder.class)
                 break;
 
-            clazz = (Class<E>) clazz.getSuperclass();
+            clazz = (Class<VH>) clazz.getSuperclass();
         }
 
         throw new IllegalArgumentException(ISuperViewHolder.class.getSimpleName() + " annotation was not found in " + clazz.getName());
