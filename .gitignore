@@ -13,3 +13,4 @@
 .externalNativeBuild
 .cxx
 /hs_err_pid*.log
+/.idea/
