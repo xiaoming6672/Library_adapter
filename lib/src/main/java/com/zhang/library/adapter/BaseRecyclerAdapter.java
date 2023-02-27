@@ -4,6 +4,9 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.zhang.library.adapter.callback.DataHolder;
 import com.zhang.library.adapter.callback.SelectManager;
 import com.zhang.library.adapter.holder.AdapterCallbackHolder;
@@ -18,9 +21,6 @@ import com.zhang.library.utils.CollectionUtils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * RecyclerView的基类Adapter
@@ -390,7 +390,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
     }
 
     protected FooterViewHolder<T> getFooter(int viewType) {
-        return CollectionUtils.get(mFooterList, viewType - 1);
+        return CollectionUtils.get(mFooterList, viewType - VIEW_TYPE_FOOTER_BASE);
     }
 
     /** 列表数据是否为空 */
