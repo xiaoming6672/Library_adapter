@@ -44,7 +44,7 @@ public class SuperRecyclerAdapter<T>/*<T extends ISuperRecyclerModel>*/
         if (isDataEmpty())
             return VIEW_TYPE_EMPTY_DATA;
 
-        T data = getDataHolder().getData(position);
+        T data = getDataHolder().getData(getRealPosition(position));
         if (data instanceof ISuperRecyclerModel) {
             Integer viewType = ((ISuperRecyclerModel) data).getItemViewType();
             return viewType != null ? viewType : Integer.valueOf(System.identityHashCode(data.getClass()));
