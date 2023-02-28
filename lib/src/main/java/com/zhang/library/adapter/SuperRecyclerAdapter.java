@@ -32,6 +32,18 @@ public class SuperRecyclerAdapter<T>/*<T extends ISuperRecyclerModel>*/
 
     @Override
     public int getItemViewType(int position) {
+        if (isHeaderPosition(position)) {
+            return VIEW_TYPE_HEADER_BASE - position;
+        }
+
+        if (isFooterPosition(position)) {
+            int realPosition = position - getHeaderCount() - getDataCount();
+            return VIEW_TYPE_FOOTER_BASE + realPosition;
+        }
+
+        if (isDataEmpty())
+            return VIEW_TYPE_EMPTY_DATA;
+
         T data = getDataHolder().getData(position);
         if (data instanceof ISuperRecyclerModel) {
             Integer viewType = ((ISuperRecyclerModel) data).getItemViewType();
