@@ -273,8 +273,8 @@ public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.Data
         Iterator<T> iterator = mSelectedMap.keySet().iterator();
         while (iterator.hasNext()) {
             T key = iterator.next();
-            notifyUnSelected(key);
             iterator.remove();
+            notifyUnSelected(key);
         }
         mSelectedMap.clear();
         mSelectedMap.put(item, "");
