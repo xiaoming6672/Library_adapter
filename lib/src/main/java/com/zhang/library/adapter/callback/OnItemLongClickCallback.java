@@ -8,5 +8,25 @@ import android.view.View;
  * @author ZhangXiaoMing 2020-01-04 11:15 星期六
  */
 public interface OnItemLongClickCallback<T> {
-    boolean onItemLongClick(View view, T data, int position);
+
+    /**
+     * 长按事件
+     *
+     * @param view     控件
+     * @param data     数据
+     * @param position 位置
+     */
+    default boolean onItemLongClick(View view, T data, int position) {
+        return false;
+    }
+
+    /**
+     * EmptyViewHolder中长按点击事件
+     *
+     * @param view 控件
+     */
+    default boolean onEmptyViewLongClick(View view) {
+        return false;
+    }
+
 }

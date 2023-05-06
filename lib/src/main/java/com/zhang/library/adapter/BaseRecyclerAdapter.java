@@ -4,9 +4,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.zhang.library.adapter.callback.DataHolder;
 import com.zhang.library.adapter.callback.SelectManager;
 import com.zhang.library.adapter.holder.AdapterCallbackHolder;
@@ -21,6 +18,9 @@ import com.zhang.library.utils.CollectionUtils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * RecyclerView的基类Adapter
@@ -456,8 +456,29 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         final int realPosition = getRealPosition(position);
         if (viewHolder instanceof HeaderViewHolder || viewHolder instanceof FooterViewHolder) {
             viewHolder.setAdapter(this);
-
             viewHolder.onBindData(null, realPosition);
+
+            return;
+        }
+
+        if (viewHolder instanceof EmptyViewHolder) {
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getCallbackHolder().notifyEmptyViewClick(v);
+                }
+            });
+
+            viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    return getCallbackHolder().notifyEmptyViewLongClick(v);
+                }
+            });
+
+            viewHolder.setAdapter(this);
+            viewHolder.onBindData(null, realPosition);
+
             return;
         }
 
