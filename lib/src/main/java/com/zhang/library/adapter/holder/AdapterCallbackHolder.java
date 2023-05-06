@@ -69,6 +69,20 @@ public class AdapterCallbackHolder<T> {
     }
 
     /**
+     * 通知EmptyViewHolder点击事件
+     *
+     * @param view 控件
+     */
+    public void notifyEmptyViewClick(View view) {
+        if (CollectionUtils.isEmpty(mOnItemClickCallbackList))
+            return;
+
+        for (OnItemClickCallback<T> callback : mOnItemClickCallbackList) {
+            callback.onEmptyViewClick(view);
+        }
+    }
+
+    /**
      * 通知item点击事件
      *
      * @param view     点击的View
@@ -83,6 +97,20 @@ public class AdapterCallbackHolder<T> {
         for (OnItemClickCallback<T> callback : mOnItemClickCallbackList) {
             callback.onItemClick(view, model, position);
         }
+    }
+
+    public boolean notifyEmptyViewLongClick(View view) {
+        if (CollectionUtils.isEmpty(mOnItemLongClickCallbackList))
+            return false;
+
+        boolean handled = false;
+        for (OnItemLongClickCallback<T> callback : mOnItemLongClickCallbackList) {
+            boolean result = callback.onEmptyViewLongClick(view);
+            if (result)
+                handled = true;
+        }
+
+        return handled;
     }
 
     /**
