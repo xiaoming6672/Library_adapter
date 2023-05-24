@@ -36,6 +36,9 @@ public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.Data
     @Override
     public void setMode(SelectMode mode) {
         this.mMode = mode;
+
+        if (mode == SelectMode.NONE)
+            clearSelected();
     }
 
     @Override
@@ -65,7 +68,7 @@ public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.Data
         mList.addAll(list);
         mSelectedMap.clear();
 
-        if (getMode() == SelectMode.SINGLE_MUST_ONE) {
+        if (getMode().isMustOneType()) {
             setSelected(0, true);
         }
     }
@@ -147,7 +150,7 @@ public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.Data
         switch (mMode) {
             case SINGLE:
                 if (isSelected) {
-                    selectSignle(item);
+                    selectSingle(item);
                 } else {
                     mSelectedMap.remove(item);
 
@@ -156,7 +159,7 @@ public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.Data
                 break;
             case SINGLE_MUST_ONE:
                 if (isSelected) {
-                    selectSignle(item);
+                    selectSingle(item);
                 }
                 break;
             case MULTIPLE:
@@ -263,13 +266,13 @@ public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.Data
             notifyUnSelected(key);
         }
 
-        if (getMode() == SelectMode.SINGLE_MUST_ONE || getMode() == SelectMode.MULTIPLE_MUST_ONE) {
+        if (getMode().isMustOneType()) {
             setSelected(0, true);
         }
     }
 
     /** 单选选中 */
-    private void selectSignle(T item) {
+    private void selectSingle(T item) {
         Iterator<T> iterator = mSelectedMap.keySet().iterator();
         while (iterator.hasNext()) {
             T key = iterator.next();

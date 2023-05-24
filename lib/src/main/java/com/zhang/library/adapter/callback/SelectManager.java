@@ -136,6 +136,7 @@ public interface SelectManager<T> {
     }
 
     enum SelectMode {
+        NONE,
         SINGLE,
         SINGLE_MUST_ONE,
         MULTIPLE,
@@ -144,6 +145,10 @@ public interface SelectManager<T> {
 
         public boolean isSingleType() {
             return this == SINGLE || this == SINGLE_MUST_ONE;
+        }
+
+        public boolean isMustOneType() {
+            return this == SINGLE_MUST_ONE || this == MULTIPLE_MUST_ONE;
         }
     }
 

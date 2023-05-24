@@ -29,6 +29,9 @@ public class SimpleSelectManager<T> implements SelectManager<T> {
     @Override
     public void setMode(SelectMode mode) {
         this.mMode = mode;
+
+        if (mode == SelectMode.NONE)
+            clearSelected();
     }
 
     @Override
@@ -58,7 +61,7 @@ public class SimpleSelectManager<T> implements SelectManager<T> {
         mList.addAll(list);
         mSelectedMap.clear();
 
-        if (getMode() == SelectMode.SINGLE_MUST_ONE) {
+        if (getMode().isMustOneType()) {
             setSelected(0, true);
         }
     }
