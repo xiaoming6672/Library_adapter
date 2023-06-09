@@ -17,6 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public abstract class BaseRecyclerViewHolder<T> extends RecyclerView.ViewHolder {
 
+    /** 选中状态变更的Payload */
+    public static final String PAYLOAD_SELECT_CHANGED = "PAYLOAD_SELECT_CHANGED";
+
     private Adapter<T> adapter;
 
     public BaseRecyclerViewHolder(@NonNull View itemView) {
@@ -40,6 +43,28 @@ public abstract class BaseRecyclerViewHolder<T> extends RecyclerView.ViewHolder 
     public final <E extends View> E findViewById(int id) {
         return itemView.findViewById(id);
     }
+
+    /**
+     * 根据payload刷新绑定数据
+     *
+     * @param item     数据
+     * @param position 位置
+     * @param payload  刷新payload
+     */
+    public void onBindDataByPayload(T item, int position, Object payload) {
+        if (PAYLOAD_SELECT_CHANGED.equals(payload))
+            onItemSelectChanged(item, position);
+    }
+
+    /**
+     * 数据选中状态变更
+     *
+     * @param item     数据
+     * @param position 位置
+     */
+    protected void onItemSelectChanged(T item, int position) {
+    }
+
 
     /** 初始化 */
     public abstract void onInit();
