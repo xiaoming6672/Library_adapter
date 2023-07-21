@@ -534,17 +534,17 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
                 @Override
                 public void onDataChanged(int index, T data) {
-                    notifyDataSetChanged();
+                    notifyItemChanged(index);
                 }
 
                 @Override
                 public void onDataAdded(int index, List<T> dataList) {
-                    notifyDataSetChanged();
+                    notifyItemRangeInserted(index, CollectionUtils.getSize(dataList));
                 }
 
                 @Override
                 public void onDataRemoved(int index, T data) {
-                    notifyDataSetChanged();
+                    notifyItemRemoved(index);
                 }
             });
         }

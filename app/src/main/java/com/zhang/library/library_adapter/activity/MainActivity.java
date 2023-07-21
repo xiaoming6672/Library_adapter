@@ -46,10 +46,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         adapter = new HeaderTestAdapter();
         adapter.setEmptyViewHolder(new EmptyHolder(rv_content));
 
-//        rv_content.setAdapter(adapter);
+        rv_content.setAdapter(adapter);
 
         TestAdapter testAdapter = new TestAdapter();
-        rv_content.setAdapter(testAdapter);
+//        rv_content.setAdapter(testAdapter);
 
         List<Object> testList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
