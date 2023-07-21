@@ -155,7 +155,7 @@ public class SuperRecyclerAdapter<T>/*<T extends ISuperRecyclerModel>*/
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
 
-            Log.e("ZHANG", "getViewHolder()>>>e = " + e.getLocalizedMessage());
+            Log.e(TAG, "getViewHolder()>>>e = " + e.getLocalizedMessage());
         }
 
         if (constructor != null) {
