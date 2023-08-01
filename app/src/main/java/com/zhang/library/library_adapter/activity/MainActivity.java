@@ -1,36 +1,16 @@
 package com.zhang.library.library_adapter.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.zhang.library.adapter.BaseRecyclerAdapter;
-import com.zhang.library.adapter.viewholder.FooterViewHolder;
-import com.zhang.library.adapter.viewholder.HeaderViewHolder;
-import com.zhang.library.adapter.viewholder.base.BaseRecyclerViewHolder;
 import com.zhang.library.library_adapter.R;
-import com.zhang.library.library_adapter.adapter.TestAdapter;
-import com.zhang.library.library_adapter.model.Model_A;
-import com.zhang.library.library_adapter.model.Model_B;
-import com.zhang.library.library_adapter.viewholder.EmptyHolder;
 import com.zhang.library.utils.LogUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView rv_content;
-    private HeaderTestAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,164 +19,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         LogUtils.setDebug(true);
 
         setContentView(R.layout.activity_main);
-
-        rv_content = findViewById(R.id.rv_content);
-        rv_content.setLayoutManager(new LinearLayoutManager(this));
-
-        adapter = new HeaderTestAdapter();
-        adapter.setEmptyViewHolder(new EmptyHolder(rv_content));
-
-        rv_content.setAdapter(adapter);
-
-        TestAdapter testAdapter = new TestAdapter();
-//        rv_content.setAdapter(testAdapter);
-
-        List<Object> testList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            if (i % 2 == 0) {
-                Model_A a = new Model_A();
-                a.value = i;
-
-                testList.add(a);
-            } else {
-                Model_B b = new Model_B();
-                b.value = String.valueOf(System.currentTimeMillis());
-
-                testList.add(b);
-            }
-        }
-        testAdapter.getDataHolder().setDataList(testList);
-
-        Random random = new Random();
-
-        List<Model_A> list = new ArrayList<>();
-        for (int i = 0; i < random.nextInt(2); i++) {
-            Model_A a = new Model_A();
-            a.value = i;
-            list.add(a);
-        }
-        adapter.getDataHolder().setDataList(list);
-        LogUtils.debug(getClass().getSimpleName(), "data size = %d", list.size());
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_data_add:
-                Model_A data = new Model_A();
-                data.value = new Random().nextInt(100);
-                adapter.getDataHolder().addData(data);
-                break;
-            case R.id.btn_data_reduce:
-                int size = adapter.getDataHolder().size();
-                if (size > 0) {
-                    adapter.getDataHolder().removeData(size - 1);
-                } else {
-                    Toast.makeText(this, "没有数据了", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case R.id.btn_add_header: {
-                Random random = new Random();
-                int headerCount = random.nextInt(5);
-                headerCount = 1;
-                LogUtils.info(getClass().getSimpleName(), "headerCount = " + headerCount);
-                for (int i = 0; i < headerCount; i++) {
-                    View view = LayoutInflater.from(this).inflate(R.layout.item_view_b, ((ViewGroup) rv_content.getParent()), false);
-//                    adapter.addHeader(view);
-                    Header holder = new Header(view);
-                    adapter.addHeader(holder);
-                }
-                break;
-            }
-            case R.id.btn_add_footer: {
-                Random random = new Random();
-                int footerCount = random.nextInt(5);
-                footerCount = 1;
-                LogUtils.debug(getClass().getSimpleName(), "footCount = " + footerCount);
-                for (int i = 0; i < footerCount; i++) {
-                    View view = LayoutInflater.from(this).inflate(R.layout.item_view_b, ((ViewGroup) rv_content.getParent()), false);
-                    Footer holder = new Footer(view);
-                    adapter.addFooter(holder);
-                }
-                break;
-            }
-            case R.id.btn_clear_header:
-                adapter.clearHeader();
-                break;
-            case R.id.btn_clear_footer:
-                adapter.clearFooter();
-                break;
-        }
+    public void onClickBaseRvBtn(View view) {
+        startActivity(new Intent(this, BaseRvAdapterActivity.class));
     }
 
-    static class Header extends HeaderViewHolder<Model_A> {
-
-        TextView tv_text;
-
-        Header(@NonNull View itemView) {
-            super(itemView);
-        }
-
-        @Override
-        public void onInit() {
-            tv_text = findViewById(R.id.tv_text);
-        }
-
-        @Override
-        public void onBindData(Model_A item, int position) {
-            tv_text.setText("Header：" + position);
-        }
+    public void onClickHeaderFooterBtn(View view) {
+        startActivity(new Intent(this, HeaderFooterActivity.class));
     }
 
-    static class Footer extends FooterViewHolder<Model_A> {
-        TextView tv_text;
-
-        Footer(@NonNull View itemView) {
-            super(itemView);
-        }
-
-        @Override
-        public void onInit() {
-            tv_text = findViewById(R.id.tv_text);
-        }
-
-        @Override
-        public void onBindData(Model_A item, int position) {
-            tv_text.setText("Footer：" + position);
-        }
+    public void onClickSuperRvBtn(View view) {
+        startActivity(new Intent(this, SuperRvAdapterActivity.class));
     }
 
-    static class HeaderTestAdapter extends BaseRecyclerAdapter<Model_A> {
-        @Override
-        protected BaseRecyclerViewHolder<Model_A> onCreateVHolder(ViewGroup parent, int viewType) {
-            return new ViewHolder(parent, R.layout.item_view_a);
-        }
-
-        @Override
-        protected void onBindData(BaseRecyclerViewHolder<Model_A> viewHolder, Model_A data, int position) {
-        }
-
-        static class ViewHolder extends BaseRecyclerViewHolder<Model_A> {
-
-            TextView tv_text;
-
-            ViewHolder(@NonNull View itemView) {
-                super(itemView);
-            }
-
-            public ViewHolder(ViewGroup parent, int layoutId) {
-                super(parent, layoutId);
-            }
-
-            @Override
-            public void onInit() {
-                tv_text = findViewById(R.id.tv_text);
-            }
-
-            @Override
-            public void onBindData(Model_A item, int position) {
-                tv_text.setText("Data：position = " + position);
-            }
-        }
-    }
 }
