@@ -31,6 +31,8 @@ public interface DataHolder<T> {
 
     void updateData(final int index, final T data);
 
+    void clearData();
+
     int size();
 
     int indexOf(final T data);

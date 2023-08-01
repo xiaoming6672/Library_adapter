@@ -102,6 +102,12 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
         notifyDataSetChanged();
     }
+
+    /** 是否有EmptyViewHolder */
+    protected boolean hasEmptyView() {
+        return mEmptyHolder != null;
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Header/Footer">
@@ -467,19 +473,9 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         }
 
         if (viewHolder instanceof EmptyViewHolder) {
-            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    getCallbackHolder().notifyEmptyViewClick(v);
-                }
-            });
+            viewHolder.itemView.setOnClickListener(v -> getCallbackHolder().notifyEmptyViewClick(v));
 
-            viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    return getCallbackHolder().notifyEmptyViewLongClick(v);
-                }
-            });
+            viewHolder.itemView.setOnLongClickListener(v -> getCallbackHolder().notifyEmptyViewLongClick(v));
 
             viewHolder.setAdapter(this);
             viewHolder.onBindData(null, realPosition);
@@ -539,7 +535,17 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
                 @Override
                 public void onDataAdded(int index, List<T> dataList) {
-                    notifyItemRangeInserted(index, CollectionUtils.getSize(dataList));
+                    //添加的数据数量
+                    int addedCount = CollectionUtils.getSize(dataList);
+                    //如果是true，表示本次添加数据之前，列表数据数量为0
+                    boolean isSame = getDataHolder().size() == addedCount;
+
+                    //添加数据之前是空列表，并且有设置空状态显示，则先移除掉空状态的显示，然后再通知新增数据的显示
+                    if (isSame && hasEmptyView())
+                        notifyItemRemoved(0);
+
+                    //通知增加新数据
+                    notifyItemRangeInserted(index, addedCount);
                 }
 
                 @Override
