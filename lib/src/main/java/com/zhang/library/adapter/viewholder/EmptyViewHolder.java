@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 
 import com.zhang.library.adapter.viewholder.base.BaseRecyclerViewHolder;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
 /**
@@ -18,7 +19,7 @@ public class EmptyViewHolder<T> extends BaseRecyclerViewHolder<T> {
         super(itemView);
     }
 
-    public EmptyViewHolder(ViewGroup parent, int layoutId) {
+    public EmptyViewHolder(ViewGroup parent, @LayoutRes int layoutId) {
         super(parent, layoutId);
     }
 
