@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:paddingHorizontal="10dp"
     tools:context=".activity.BaseRvAdapterActivity"
     tools:ignore="HardcodedText,UsingOnClickInXml">
 
@@ -67,5 +68,5 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_base_rv_list" />
+        tools:listitem="@layout/item_common_rv_list" />
 </LinearLayout>

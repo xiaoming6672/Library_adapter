@@ -80,7 +80,7 @@ public class BaseRvAdapterActivity extends AppCompatActivity {
         public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
             super.onAttachedToRecyclerView(recyclerView);
 
-            setEmptyViewHolder(new EmptyViewHolder<>(recyclerView, R.layout.view_base_rv_empty));
+            setEmptyViewHolder(new EmptyViewHolder<>(recyclerView, R.layout.view_common_rv_empty));
         }
     }
 
@@ -89,7 +89,7 @@ public class BaseRvAdapterActivity extends AppCompatActivity {
         TextView tvText;
 
         public ViewHolder(ViewGroup parent) {
-            super(parent, R.layout.item_base_rv_list);
+            super(parent, R.layout.item_common_rv_list);
         }
 
         /** 初始化 */
