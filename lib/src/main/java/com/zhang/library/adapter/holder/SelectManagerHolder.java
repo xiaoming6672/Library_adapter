@@ -6,6 +6,7 @@ import com.zhang.library.adapter.callback.SelectManager;
 import com.zhang.library.utils.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -18,19 +19,20 @@ import java.util.Map;
  */
 public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.DataChangeCallback<T> {
 
-    private Adapter<T> mAdapter;
+    private final Adapter<T> mAdapter;
 
     private SelectMode mMode;
     private List<T> mList;
-    private final Map<T, String> mSelectedMap = new IdentityHashMap<>();
+    private final Map<T, String> mSelectedMap;
 
     private final List<OnItemSelectChangeCallback<T>> mCallbackList = new ArrayList<>();
 
     public SelectManagerHolder(Adapter<T> adapter) {
+        this.mList = new ArrayList<>();
+        this.mSelectedMap = Collections.synchronizedMap(new IdentityHashMap<>());
+
         this.mAdapter = adapter;
         this.mAdapter.getDataHolder().addDataChangeCallback(this);
-
-        this.mList = new ArrayList<>();
     }
 
     @Override
@@ -89,10 +91,9 @@ public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.Data
 
     @Override
     public void addItem(T item) {
-        if (mList == null) {
-            mList = new ArrayList<>();
-        }
-        mList.add(item);
+        List<T> list = new ArrayList<>();
+        list.add(item);
+        addItems(list);
     }
 
     @Override
@@ -101,6 +102,9 @@ public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.Data
             mList = new ArrayList<>();
         }
         mList.addAll(list);
+
+        if (!hasSelectedData() && mMode.isMustOneType())
+            setSelected(0, true);
     }
 
     @Override
@@ -110,6 +114,9 @@ public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.Data
         }
 
         mList.addAll(index, list);
+
+        if (!hasSelectedData() && mMode.isMustOneType())
+            setSelected(0, true);
     }
 
     @Override
@@ -316,6 +323,21 @@ public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.Data
         }
     }
 
+    /** 是否有被选中的数据 */
+    public boolean hasSelectedData() {
+        return !mSelectedMap.isEmpty();
+    }
+
+    /** 销毁 */
+    public void destroy() {
+        mAdapter.getDataHolder().removeDataChangeCallback(this);
+        mList.clear();
+        mCallbackList.clear();
+    }
+
+
+    //<editor-fold desc="DataChangeCallback">
+
     @Override
     public void onDataChanged(List<T> list) {
         setItems(list);
@@ -335,4 +357,6 @@ public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.Data
     public void onDataRemoved(int index, T data) {
         removeItem(data);
     }
+
+    //</editor-fold>
 }
