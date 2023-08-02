@@ -199,6 +199,17 @@ public class AdapterDataHolder<T> implements DataHolder<T> {
     }
 
     @Override
+    public void clearData() {
+        if (!CollectionUtils.isEmpty(mDataList))
+            mDataList.clear();
+
+        ListIterator<DataChangeCallback<T>> listIterator = getDataChangeCallbackListIterator();
+        while (listIterator.hasNext()) {
+            listIterator.next().onDataChanged(mDataList);
+        }
+    }
+
+    @Override
     public int size() {
         return CollectionUtils.getSize(mDataList);
     }

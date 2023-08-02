@@ -27,7 +27,7 @@ public abstract class BaseRecyclerViewHolder<T> extends RecyclerView.ViewHolder 
         onInit();
     }
 
-    public BaseRecyclerViewHolder(ViewGroup parent, @LayoutRes int layoutId) {
+    public BaseRecyclerViewHolder(@NonNull ViewGroup parent, @LayoutRes int layoutId) {
         this(LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false));
     }
 

@@ -16,7 +16,6 @@ import com.zhang.library.adapter.viewholder.base.BaseRecyclerViewHolder;
 import com.zhang.library.utils.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -77,9 +76,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         if (emptyView == null)
             return;
 
-        mEmptyHolder = new EmptyViewHolder<>(emptyView);
-
-        notifyDataSetChanged();
+        setEmptyViewHolder(new EmptyViewHolder<>(emptyView));
     }
 
     /**
@@ -93,18 +90,35 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
         mEmptyHolder = holder;
 
-        notifyDataSetChanged();
+        boolean dataEmpty = isDataEmpty();
+        if (dataEmpty)
+            notifyItemInserted(getHeaderCount());
     }
 
     /** 移除空数据展示ViewHolder */
     public void removeEmptyViewHolder() {
         mEmptyHolder = null;
 
-        notifyDataSetChanged();
+        boolean dataEmpty = isDataEmpty();
+        if (dataEmpty)
+            notifyItemRemoved(getHeaderCount());
     }
+
+    /** 是否有EmptyViewHolder */
+    protected boolean hasEmptyView() {
+        return mEmptyHolder != null;
+    }
+
+    /** 列表无数据 */
+    protected boolean isEmptyViewType(int viewType) {
+        return viewType == VIEW_TYPE_EMPTY_DATA;
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Header/Footer">
+
+    //<editor-fold desc="Header">
 
     /**
      * 添加HeaderView
@@ -114,9 +128,6 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
     public void addHeader(View header) {
         if (header == null) {
             return;
-        }
-        if (mHeaderList == null) {
-            mHeaderList = new ArrayList<>();
         }
 
         addHeader(new HeaderViewHolder<>(header));
@@ -130,15 +141,10 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
     public void addHeader(HeaderViewHolder<T> header) {
         if (header == null)
             return;
-        if (mHeaderList == null)
-            mHeaderList = new ArrayList<>();
 
-        if (mHeaderList.contains(header))
-            return;
-
-        mHeaderList.add(header);
-
-        notifyDataSetChanged();
+        List<HeaderViewHolder<T>> list = new ArrayList<>();
+        list.add(header);
+        addHeader(list);
     }
 
     /**
@@ -160,28 +166,32 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
             mHeaderList.add(holder);
         }
 
-        notifyDataSetChanged();
+        int count = list.size();
+        int position = mHeaderList.size() - count;
+        notifyItemRangeInserted(position, count);
     }
 
     /**
      * 移除HeaderView
      *
-     * @param header 头部View
+     * @param view 头部View
      */
-    public void removeHeader(View header) {
-        if (header == null || CollectionUtils.isEmpty(mHeaderList))
+    public void removeHeader(View view) {
+        if (view == null || CollectionUtils.isEmpty(mHeaderList))
             return;
 
-        Iterator<HeaderViewHolder<T>> iterator = mHeaderList.iterator();
-        while (iterator.hasNext()) {
-            HeaderViewHolder<T> holder = iterator.next();
-            if (holder.itemView.equals(header)) {
-                iterator.remove();
+        HeaderViewHolder<T> header = null;
+        for (HeaderViewHolder<T> holder : mHeaderList) {
+            if (holder.itemView.equals(view)) {
+                header = holder;
                 break;
             }
         }
 
-        notifyDataSetChanged();
+        if (header == null)
+            return;
+
+        removeHeader(header);
     }
 
     /**
@@ -194,9 +204,11 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
             return;
         }
 
-        mHeaderList.remove(header);
+        int index = mHeaderList.indexOf(header);
+        boolean result = mHeaderList.remove(header);
 
-        notifyDataSetChanged();
+        if (result)
+            notifyItemRemoved(index);
     }
 
     /** 清空所有的HeaderView */
@@ -204,10 +216,14 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         if (CollectionUtils.isEmpty(mHeaderList))
             return;
 
+        int count = mHeaderList.size();
         mHeaderList.clear();
 
-        notifyDataSetChanged();
+        notifyItemRangeRemoved(0, count);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Footer">
 
     /**
      * 添加FooterView
@@ -217,9 +233,6 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
     public void addFooter(View footer) {
         if (footer == null)
             return;
-
-        if (mFooterList == null)
-            mFooterList = new ArrayList<>();
 
         addFooter(new FooterViewHolder<>(footer));
     }
@@ -233,15 +246,9 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         if (footer == null)
             return;
 
-        if (mFooterList == null)
-            mFooterList = new ArrayList<>();
-
-        if (mFooterList.contains(footer))
-            return;
-
-        mFooterList.add(footer);
-
-        notifyDataSetChanged();
+        List<FooterViewHolder<T>> list = new ArrayList<>();
+        list.add(footer);
+        addFooter(list);
     }
 
     /**
@@ -263,28 +270,32 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
             mFooterList.add(holder);
         }
 
-        notifyDataSetChanged();
+        int position = getItemCount();
+        int count = list.size();
+        notifyItemRangeInserted(position, count);
     }
 
     /**
      * 移除FooterView
      *
-     * @param footer 底部View
+     * @param view 底部View
      */
-    public void removeFooter(View footer) {
-        if (footer == null || CollectionUtils.isEmpty(mFooterList))
+    public void removeFooter(View view) {
+        if (view == null || CollectionUtils.isEmpty(mFooterList))
             return;
 
-        Iterator<FooterViewHolder<T>> iterator = mFooterList.iterator();
-        while (iterator.hasNext()) {
-            FooterViewHolder<T> holder = iterator.next();
-            if (holder.itemView.equals(footer)) {
-                iterator.remove();
+        FooterViewHolder<T> footer = null;
+        for (FooterViewHolder<T> holder : mFooterList) {
+            if (holder.itemView.equals(view)) {
+                footer = holder;
                 break;
             }
         }
 
-        notifyDataSetChanged();
+        if (footer == null)
+            return;
+
+        removeFooter(footer);
     }
 
     /**
@@ -296,9 +307,11 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         if (footer == null || CollectionUtils.isEmpty(mFooterList))
             return;
 
-        mFooterList.remove(footer);
+        int index = mFooterList.indexOf(footer) + getHeaderCount() + getDataCount();
+        boolean result = mFooterList.remove(footer);
 
-        notifyDataSetChanged();
+        if (result)
+            notifyItemRemoved(index);
     }
 
     /** 清空所有的FooterView */
@@ -306,31 +319,31 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         if (CollectionUtils.isEmpty(mFooterList))
             return;
 
+        int count = mFooterList.size();
         mFooterList.clear();
 
-        notifyDataSetChanged();
+        int position = getHeaderCount() + getDataCount();
+        notifyItemRangeRemoved(position, count);
     }
+    //</editor-fold>
 
+    //<editor-fold desc="判断方法">
     protected boolean hasHeaderView() {
         return !CollectionUtils.isEmpty(mHeaderList);
-    }
-
-    protected boolean hasFooterView() {
-        return !CollectionUtils.isEmpty(mFooterList);
     }
 
     protected int getHeaderCount() {
         return CollectionUtils.getSize(mHeaderList);
     }
 
+    protected boolean hasFooterView() {
+        return !CollectionUtils.isEmpty(mFooterList);
+    }
+
     protected int getFooterCount() {
         return CollectionUtils.getSize(mFooterList);
     }
 
-    /** 列表无数据 */
-    protected boolean isEmptyViewType(int viewType) {
-        return viewType == VIEW_TYPE_EMPTY_DATA;
-    }
 
     /** 头部HeaderView */
     protected boolean isHeaderViewType(int viewType) {
@@ -354,6 +367,8 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         return !isHeaderPosition(position) && !isDataPosition(position);
 //        return hasFooterView() && position >= (getHeaderCount() + getDataCount());
     }
+    //</editor-fold>
+
     //</editor-fold>
 
     /** position位置是否是数据范围 */
@@ -467,19 +482,9 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         }
 
         if (viewHolder instanceof EmptyViewHolder) {
-            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    getCallbackHolder().notifyEmptyViewClick(v);
-                }
-            });
+            viewHolder.itemView.setOnClickListener(v -> getCallbackHolder().notifyEmptyViewClick(v));
 
-            viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    return getCallbackHolder().notifyEmptyViewLongClick(v);
-                }
-            });
+            viewHolder.itemView.setOnLongClickListener(v -> getCallbackHolder().notifyEmptyViewLongClick(v));
 
             viewHolder.setAdapter(this);
             viewHolder.onBindData(null, realPosition);
@@ -539,7 +544,17 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
                 @Override
                 public void onDataAdded(int index, List<T> dataList) {
-                    notifyItemRangeInserted(index, CollectionUtils.getSize(dataList));
+                    //添加的数据数量
+                    int addedCount = CollectionUtils.getSize(dataList);
+                    //如果是true，表示本次添加数据之前，列表数据数量为0
+                    boolean isSame = getDataHolder().size() == addedCount;
+
+                    //添加数据之前是空列表，并且有设置空状态显示，则先移除掉空状态的显示，然后再通知新增数据的显示
+                    if (isSame && hasEmptyView())
+                        notifyItemRemoved(0);
+
+                    //通知增加新数据
+                    notifyItemRangeInserted(index, addedCount);
                 }
 
                 @Override

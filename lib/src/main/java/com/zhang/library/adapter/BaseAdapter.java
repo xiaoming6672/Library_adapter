@@ -13,10 +13,13 @@ import com.zhang.library.adapter.viewholder.base.BaseViewHolder;
 
 import java.util.List;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 /**
  * ListView/GridView的基类适配器
  *
  * @author ZhangXiaoMing 2020-01-03 17:20 星期五
+ * @deprecated 列表改用 {@link RecyclerView}，Adapter使用{@link BaseRecyclerAdapter}
  */
 public abstract class BaseAdapter<T> extends android.widget.BaseAdapter implements Adapter<T> {
 

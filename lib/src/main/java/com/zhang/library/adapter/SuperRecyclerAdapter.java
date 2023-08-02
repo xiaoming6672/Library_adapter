@@ -9,6 +9,8 @@ import com.zhang.library.adapter.annotation.ISuperViewHolder;
 import com.zhang.library.adapter.model.ISuperRecyclerModel;
 import com.zhang.library.adapter.viewholder.base.BaseRecyclerViewHolder;
 import com.zhang.library.adapter.viewholder.base.SuperViewHolder;
+import com.zhang.library.utils.LogUtils;
+import com.zhang.library.utils.context.ContextUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -45,19 +47,22 @@ public class SuperRecyclerAdapter<T>/*<T extends ISuperRecyclerModel>*/
             return VIEW_TYPE_EMPTY_DATA;
 
         T data = getDataHolder().getData(getRealPosition(position));
+        int identityHashCode = System.identityHashCode(data.getClass());
+        LogUtils.debug(TAG, "getItemViewType()>>>data.class=%s , identityHashCode=%d", data.getClass().getName(), identityHashCode);
+
         if (data instanceof ISuperRecyclerModel) {
             Integer viewType = ((ISuperRecyclerModel) data).getItemViewType();
-            return viewType != null ? viewType : Integer.valueOf(System.identityHashCode(data.getClass()));
+            return viewType != null ? viewType : identityHashCode;
         }
 
-        return System.identityHashCode(data.getClass());
+        return identityHashCode;
     }
 
     @Override
     protected BaseRecyclerViewHolder onCreateVHolder(ViewGroup parent, int viewType) {
         Class<?> clazz = mViewHolderMap.get(viewType);
         if (clazz == null) {
-            throw new IllegalArgumentException("No ViewHolder found!");
+            throw new IllegalArgumentException("No ViewHolder found! viewType=" + viewType);
         }
 
         return getViewHolder(parent, (Class<T>) clazz);
@@ -98,16 +103,29 @@ public class SuperRecyclerAdapter<T>/*<T extends ISuperRecyclerModel>*/
 
         Type type = getGenericType(clazz);
         if (type == null) {
-            return;
+            type = Object.class;
+//            return;
         }
 
         int itemViewType = viewType != null ? viewType : System.identityHashCode(type);
         mViewHolderMap.put(itemViewType, clazz);
         mViewLayoutIdMap.put(clazz, layoutId);
+
+        LogUtils.debug(TAG, "registerViewHolder()>>>type=%s , itemViewType=%d , clazz=%s , layoutId=%s",
+                type.toString(),
+                itemViewType,
+                clazz,
+                ContextUtils.get().getResources().getResourceEntryName(layoutId));
     }
 
     private static Type getGenericType(Class<?> clazz) {
-        final ParameterizedType parameterizedType = (ParameterizedType) clazz.getGenericSuperclass();
+        ParameterizedType parameterizedType;
+        try {
+            parameterizedType = (ParameterizedType) clazz.getGenericSuperclass();
+        } catch (Exception e) {
+            e.printStackTrace();
+            parameterizedType = null;
+        }
         if (parameterizedType == null) {
             return null;
         }
@@ -152,6 +170,7 @@ public class SuperRecyclerAdapter<T>/*<T extends ISuperRecyclerModel>*/
 
         try {
             constructor = clazz.getConstructor(ViewGroup.class, int.class);
+            constructor.setAccessible(true);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
 
@@ -163,21 +182,20 @@ public class SuperRecyclerAdapter<T>/*<T extends ISuperRecyclerModel>*/
                 @SuppressWarnings("unchecked")
                 SuperViewHolder<T> holder = (SuperViewHolder<T>) constructor.newInstance(parent, layoutId);
                 return holder;
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
+
+                Log.e(TAG, "getViewHolder()>>>e = " + e.getLocalizedMessage());
             }
         }
 
         try {
             constructor = clazz.getConstructor(View.class);
+            constructor.setAccessible(true);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
+
+            Log.e(TAG, "getViewHolder()>>>e = " + e.getLocalizedMessage());
         }
 
         if (constructor == null)

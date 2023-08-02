@@ -4,6 +4,7 @@ import com.zhang.library.adapter.callback.SelectManager;
 import com.zhang.library.utils.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -18,12 +19,13 @@ public class SimpleSelectManager<T> implements SelectManager<T> {
 
     private SelectMode mMode;
     private List<T> mList;
-    private final Map<T, String> mSelectedMap = new IdentityHashMap<>();
+    private final Map<T, String> mSelectedMap;
 
     private final List<OnItemSelectChangeCallback<T>> mCallbackList = new ArrayList<>();
 
     public SimpleSelectManager() {
         this.mList = new ArrayList<>();
+        mSelectedMap = Collections.synchronizedMap(new IdentityHashMap<>());
     }
 
     @Override
@@ -82,10 +84,9 @@ public class SimpleSelectManager<T> implements SelectManager<T> {
 
     @Override
     public void addItem(T item) {
-        if (mList == null) {
-            mList = new ArrayList<>();
-        }
-        mList.add(item);
+        List<T> list = new ArrayList<>();
+        list.add(item);
+        addItems(list);
     }
 
     @Override
@@ -94,6 +95,9 @@ public class SimpleSelectManager<T> implements SelectManager<T> {
             mList = new ArrayList<>();
         }
         mList.addAll(list);
+
+        if (!hasSelectedData() && mMode.isMustOneType())
+            setSelected(0, true);
     }
 
     @Override
@@ -103,6 +107,9 @@ public class SimpleSelectManager<T> implements SelectManager<T> {
         }
 
         mList.addAll(index, list);
+
+        if (!hasSelectedData() && mMode.isMustOneType())
+            setSelected(0, true);
     }
 
     @Override
@@ -143,7 +150,7 @@ public class SimpleSelectManager<T> implements SelectManager<T> {
         switch (mMode) {
             case SINGLE:
                 if (isSelected) {
-                    selectSignle(item);
+                    selectSingle(item);
                 } else {
                     mSelectedMap.remove(item);
 
@@ -152,7 +159,7 @@ public class SimpleSelectManager<T> implements SelectManager<T> {
                 break;
             case SINGLE_MUST_ONE:
                 if (isSelected) {
-                    selectSignle(item);
+                    selectSingle(item);
                 }
                 break;
             case MULTIPLE:
@@ -265,7 +272,7 @@ public class SimpleSelectManager<T> implements SelectManager<T> {
     }
 
     /** 单选选中 */
-    private void selectSignle(T item) {
+    private void selectSingle(T item) {
         Iterator<T> iterator = mSelectedMap.keySet().iterator();
         while (iterator.hasNext()) {
             T key = iterator.next();
@@ -307,5 +314,16 @@ public class SimpleSelectManager<T> implements SelectManager<T> {
         for (OnItemSelectChangeCallback<T> callback : mCallbackList) {
             callback.onItemSelectedChange(item, isSelected);
         }
+    }
+
+    /** 是否有被选中的数据 */
+    public boolean hasSelectedData() {
+        return !mSelectedMap.isEmpty();
+    }
+
+    /** 销毁 */
+    public void destroy() {
+        mList.clear();
+        mCallbackList.clear();
     }
 }
