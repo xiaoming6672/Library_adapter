@@ -159,14 +159,18 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         if (mHeaderList == null)
             mHeaderList = new ArrayList<>();
 
+        int count = 0;
         for (HeaderViewHolder<T> holder : list) {
             if (mHeaderList.contains(holder))
                 continue;
 
             mHeaderList.add(holder);
+            count++;
         }
 
-        int count = list.size();
+        if (count == 0)
+            return;
+
         int position = mHeaderList.size() - count;
         notifyItemRangeInserted(position, count);
     }
@@ -263,15 +267,19 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         if (mFooterList == null)
             mFooterList = new ArrayList<>();
 
+        int count = 0;
         for (FooterViewHolder<T> holder : list) {
             if (mFooterList.contains(holder))
                 continue;
 
             mFooterList.add(holder);
+            count++;
         }
 
+        if (count == 0)
+            return;
+
         int position = getItemCount();
-        int count = list.size();
         notifyItemRangeInserted(position, count);
     }
 
@@ -547,10 +555,10 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
                     //添加的数据数量
                     int addedCount = CollectionUtils.getSize(dataList);
                     //如果是true，表示本次添加数据之前，列表数据数量为0
-                    boolean isSame = getDataHolder().size() == addedCount;
+                    boolean isEmptyBeforeAdd = getDataHolder().size() == addedCount;
 
                     //添加数据之前是空列表，并且有设置空状态显示，则先移除掉空状态的显示，然后再通知新增数据的显示
-                    if (isSame && hasEmptyView())
+                    if (isEmptyBeforeAdd && hasEmptyView())
                         notifyItemRemoved(0);
 
                     //通知增加新数据
