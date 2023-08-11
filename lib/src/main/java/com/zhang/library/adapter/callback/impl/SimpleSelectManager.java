@@ -94,7 +94,15 @@ public class SimpleSelectManager<T> implements SelectManager<T> {
         if (mList == null) {
             mList = new ArrayList<>();
         }
-        mList.addAll(list);
+
+        if (!CollectionUtils.isEmpty(list)) {
+            for (T item : list) {
+                if (mList.contains(item))
+                    continue;
+
+                mList.add(item);
+            }
+        }
 
         if (!hasSelectedData() && mMode.isMustOneType())
             setSelected(0, true);
