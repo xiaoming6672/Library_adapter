@@ -18,6 +18,7 @@ import com.zhang.library.utils.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -161,7 +162,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
         int count = 0;
         for (HeaderViewHolder<T> holder : list) {
-            if (mHeaderList.contains(holder))
+            if (containHeader(holder))
                 continue;
 
             mHeaderList.add(holder);
@@ -213,6 +214,35 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
         if (result)
             notifyItemRemoved(index);
+    }
+
+    /**
+     * 判断header是否已添加
+     *
+     * @param header header
+     */
+    public boolean containHeader(HeaderViewHolder<T> header) {
+        if (header == null || CollectionUtils.isEmpty(mHeaderList))
+            return false;
+
+        return mHeaderList.contains(header);
+    }
+
+    /**
+     * 判断布局是否已被添加到header中
+     *
+     * @param view 布局
+     */
+    public boolean containHeader(View view) {
+        if (view == null || CollectionUtils.isEmpty(mHeaderList))
+            return false;
+
+        for (HeaderViewHolder<T> holder : mHeaderList) {
+            if (holder.itemView.equals(view))
+                return true;
+        }
+
+        return false;
     }
 
     /** 清空所有的HeaderView */
@@ -336,19 +366,24 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
     //</editor-fold>
 
     //<editor-fold desc="判断方法">
-    protected boolean hasHeaderView() {
+
+    /** 是否有添加Header */
+    public boolean hasHeaderHolder() {
         return !CollectionUtils.isEmpty(mHeaderList);
     }
 
-    protected int getHeaderCount() {
+    /** 获取Header数量 */
+    public int getHeaderCount() {
         return CollectionUtils.getSize(mHeaderList);
     }
 
-    protected boolean hasFooterView() {
+    /** 是否有添加Footer */
+    public boolean hasFooterHolder() {
         return !CollectionUtils.isEmpty(mFooterList);
     }
 
-    protected int getFooterCount() {
+    /** 获取Footer数量 */
+    public int getFooterCount() {
         return CollectionUtils.getSize(mFooterList);
     }
 
@@ -366,12 +401,12 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
     }
 
     /** position位置是否是在HeaderView范围 */
-    protected boolean isHeaderPosition(int position) {
-        return hasHeaderView() && position < getHeaderCount();
+    public boolean isHeaderPosition(int position) {
+        return hasHeaderHolder() && position < getHeaderCount();
     }
 
     /** position是否在FooterView范围 */
-    protected boolean isFooterPosition(int position) {
+    public boolean isFooterPosition(int position) {
         return !isHeaderPosition(position) && !isDataPosition(position);
 //        return hasFooterView() && position >= (getHeaderCount() + getDataCount());
     }
@@ -380,8 +415,8 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
     //</editor-fold>
 
     /** position位置是否是数据范围 */
-    protected boolean isDataPosition(int position) {
-        if (hasHeaderView()) {
+    public boolean isDataPosition(int position) {
+        if (hasHeaderHolder()) {
             int headerCount = getHeaderCount();
             int realPosition = position - headerCount;
 
@@ -392,16 +427,13 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
     /**
      * 获取当前item的position在对应的数据模块中的真实位置。
-     * <p>
-     * 如果当前position属于头部数据，返回头部position
-     * <p>
-     * 如果当前position属于实际数据，返回数据position
-     * <p>
-     * 如果当前position属于尾部数据，返回尾部position
+     * <li> 如果当前position属于头部数据，返回头部position
+     * <li> 如果当前position属于实际数据，返回数据position
+     * <li> 如果当前position属于尾部数据，返回尾部position
      *
      * @param position 当前item的position
      */
-    protected int getRealPosition(int position) {
+    public int getRealPosition(int position) {
         if (isHeaderPosition(position)) {
             return position;
         }
@@ -422,12 +454,16 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
     }
 
     /** 列表数据是否为空 */
-    protected boolean isDataEmpty() {
+    public boolean isDataEmpty() {
         return getDataHolder().size() == 0;
     }
 
-    /** 获取数据列表数量 */
-    protected int getDataCount() {
+    /**
+     * 获取数据列表数量
+     * <br>注意：此方法不能完全替代{@link DataHolder#size()}使用
+     * <br>如果列表为空，并且有添加{@link #mEmptyHolder}，此时返回的值为1
+     */
+    public int getDataCount() {
         return isDataEmpty() ? (mEmptyHolder == null ? 0 : 1) : getDataHolder().size();
     }
 
@@ -454,11 +490,25 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         return isDataEmpty() ? VIEW_TYPE_EMPTY_DATA : VIEW_TYPE_NORMAL_DATA;
     }
 
+    @Override
+    @CallSuper
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+
+        setContext(recyclerView.getContext());
+    }
+
+    @Override
+    @CallSuper
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+
+        setContext(null);
+    }
+
     @NonNull
     @Override
     public BaseRecyclerViewHolder<T> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        setContext(parent.getContext());
-
         if (isHeaderViewType(viewType)) {
             HeaderViewHolder<T> headerHolder = getHeader(viewType);
 
@@ -491,31 +541,17 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
         if (viewHolder instanceof EmptyViewHolder) {
             viewHolder.itemView.setOnClickListener(v -> getCallbackHolder().notifyEmptyViewClick(v));
-
             viewHolder.itemView.setOnLongClickListener(v -> getCallbackHolder().notifyEmptyViewLongClick(v));
 
             viewHolder.setAdapter(this);
             viewHolder.onBindData(null, realPosition);
-
             return;
         }
 
         final T data = getItemData(position);
 
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getCallbackHolder().notifyItemClick(view, data, realPosition);
-            }
-        });
-
-        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                return getCallbackHolder().notifyItemLongClick(v, data, realPosition);
-            }
-        });
-
+        viewHolder.itemView.setOnClickListener(view -> getCallbackHolder().notifyItemClick(view, data, realPosition));
+        viewHolder.itemView.setOnLongClickListener(v -> getCallbackHolder().notifyItemLongClick(v, data, realPosition));
 
         viewHolder.setAdapter(this);
         viewHolder.onBindData(data, realPosition);

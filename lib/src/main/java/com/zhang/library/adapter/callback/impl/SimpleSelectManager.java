@@ -262,6 +262,7 @@ public class SimpleSelectManager<T> implements SelectManager<T> {
         mSelectedMap.clear();
         for (T item : mList) {
             mSelectedMap.put(item, "");
+            notifySelected(item);
         }
     }
 

@@ -29,6 +29,8 @@ public interface DataHolder<T> {
 
     T removeData(final int index);
 
+    boolean removeData(List<T> list);
+
     void updateData(final int index, final T data);
 
     void clearData();
