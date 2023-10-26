@@ -1,11 +1,15 @@
 package com.zhang.library.adapter.holder;
 
+import android.util.Pair;
+
 import com.zhang.library.adapter.callback.DataHolder;
 import com.zhang.library.utils.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * 适配器数据持有者
@@ -16,7 +20,7 @@ public class AdapterDataHolder<T> implements DataHolder<T> {
 
     private List<T> mDataList;
 
-    private List<DataChangeCallback<T>> mDataChangeCallbackList;
+    private final List<DataChangeCallback<T>> mDataChangeCallbackList;
 
     private DataTransform<T> mDataTransform;
 
@@ -180,6 +184,32 @@ public class AdapterDataHolder<T> implements DataHolder<T> {
         }
 
         return removeData;
+    }
+
+    @Override
+    public boolean removeData(List<T> list) {
+        if (CollectionUtils.isEmpty(mDataList) || CollectionUtils.isEmpty(list))
+            return false;
+
+        List<Pair<Integer, T>> pairList = new ArrayList<>();
+        for (T item : list) {
+            int index = mDataList.indexOf(item);
+            if (index != RecyclerView.NO_POSITION)
+                pairList.add(Pair.create(index, item));
+        }
+
+        boolean result = mDataList.removeAll(list);
+
+        if (result) {
+            ListIterator<DataChangeCallback<T>> iterator = getDataChangeCallbackListIterator();
+            for (Pair<Integer, T> pair : pairList) {
+                while (iterator.hasNext()) {
+                    iterator.next().onDataRemoved(pair.first, pair.second);
+                }
+            }
+        }
+
+        return result;
     }
 
     @Override

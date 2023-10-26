@@ -16,9 +16,7 @@ public interface OnItemLongClickCallback<T> {
      * @param data     数据
      * @param position 位置
      */
-    default boolean onItemLongClick(View view, T data, int position) {
-        return false;
-    }
+    boolean onItemLongClick(View view, T data, int position);
 
     /**
      * EmptyViewHolder中长按点击事件

@@ -261,6 +261,7 @@ public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.Data
         mSelectedMap.clear();
         for (T item : mList) {
             mSelectedMap.put(item, "");
+            notifySelected(item);
         }
     }
 

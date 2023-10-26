@@ -16,8 +16,7 @@ public interface OnItemClickCallback<T> {
      * @param data     数据
      * @param position 位置
      */
-    default void onItemClick(View view, T data, int position) {
-    }
+    void onItemClick(View view, T data, int position);
 
     /**
      * EmptyViewHolder中点击事件
