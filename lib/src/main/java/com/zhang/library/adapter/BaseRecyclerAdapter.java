@@ -28,7 +28,8 @@ import androidx.recyclerview.widget.RecyclerView;
  * @author ZhangXiaoMing 2020-01-04 9:44 星期六
  */
 public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRecyclerViewHolder<T>>
-        implements Adapter<T> {
+        implements Adapter<T>,
+        DataHolder.DataChangeCallback<T> {
 
     /** data数据的ViewType */
     protected final int VIEW_TYPE_NORMAL_DATA = 0;
@@ -506,6 +507,29 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         setContext(null);
     }
 
+    @Override
+    @CallSuper
+    public void onViewAttachedToWindow(@NonNull BaseRecyclerViewHolder<T> holder) {
+        holder.onViewAttachedToWindow();
+    }
+
+    @Override
+    @CallSuper
+    public void onViewDetachedFromWindow(@NonNull BaseRecyclerViewHolder<T> holder) {
+        holder.onViewDetachedFromWindow();
+    }
+
+    @Override
+    @CallSuper
+    public void onViewRecycled(@NonNull BaseRecyclerViewHolder<T> holder) {
+        holder.onViewRecycled();
+    }
+
+    @Override
+    public boolean onFailedToRecycleView(@NonNull BaseRecyclerViewHolder<T> holder) {
+        return super.onFailedToRecycleView(holder);
+    }
+
     @NonNull
     @Override
     public BaseRecyclerViewHolder<T> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -575,37 +599,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
     public DataHolder<T> getDataHolder() {
         if (mDataHolder == null) {
             mDataHolder = new AdapterDataHolder<>();
-            mDataHolder.addDataChangeCallback(new DataHolder.DataChangeCallback<T>() {
-                @Override
-                public void onDataChanged(List<T> list) {
-                    notifyDataSetChanged();
-                }
-
-                @Override
-                public void onDataChanged(int index, T data) {
-                    notifyItemChanged(index);
-                }
-
-                @Override
-                public void onDataAdded(int index, List<T> dataList) {
-                    //添加的数据数量
-                    int addedCount = CollectionUtils.getSize(dataList);
-                    //如果是true，表示本次添加数据之前，列表数据数量为0
-                    boolean isEmptyBeforeAdd = getDataHolder().size() == addedCount;
-
-                    //添加数据之前是空列表，并且有设置空状态显示，则先移除掉空状态的显示，然后再通知新增数据的显示
-                    if (isEmptyBeforeAdd && hasEmptyView())
-                        notifyItemRemoved(0);
-
-                    //通知增加新数据
-                    notifyItemRangeInserted(index, addedCount);
-                }
-
-                @Override
-                public void onDataRemoved(int index, T data) {
-                    notifyItemRemoved(index);
-                }
-            });
+            mDataHolder.addDataChangeCallback(this);
         }
         return mDataHolder;
     }
@@ -625,6 +619,44 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         }
         return mSelectManager;
     }
+
+    //<editor-fold desc="DataHolder.DataChangeCallback">
+
+    @Override
+    @CallSuper
+    public void onDataChanged(List<T> list) {
+        notifyDataSetChanged();
+    }
+
+    @Override
+    @CallSuper
+    public void onDataChanged(int index, T data) {
+        notifyItemChanged(index);
+    }
+
+    @Override
+    @CallSuper
+    public void onDataAdded(int index, List<T> dataList) {
+        //添加的数据数量
+        int addedCount = CollectionUtils.getSize(dataList);
+        //如果是true，表示本次添加数据之前，列表数据数量为0
+        boolean isEmptyBeforeAdd = getDataHolder().size() == addedCount;
+
+        //添加数据之前是空列表，并且有设置空状态显示，则先移除掉空状态的显示，然后再通知新增数据的显示
+        if (isEmptyBeforeAdd && hasEmptyView())
+            notifyItemRemoved(0);
+
+        //通知增加新数据
+        notifyItemRangeInserted(index, addedCount);
+    }
+
+    @Override
+    @CallSuper
+    public void onDataRemoved(int index, T data) {
+        notifyItemRemoved(index);
+    }
+
+    //</editor-fold>
 
     /**
      * 创建ViewHolder
