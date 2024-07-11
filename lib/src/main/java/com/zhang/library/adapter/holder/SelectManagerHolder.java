@@ -21,7 +21,7 @@ public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.Data
 
     private final Adapter<T> mAdapter;
 
-    private SelectMode mMode;
+    private SelectMode mMode = SelectMode.NONE;
     private List<T> mList;
     private final Map<T, String> mSelectedMap;
 

@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class SimpleSelectManager<T> implements SelectManager<T> {
 
-    private SelectMode mMode;
+    private SelectMode mMode = SelectMode.NONE;
     private List<T> mList;
     private final Map<T, String> mSelectedMap;
 
