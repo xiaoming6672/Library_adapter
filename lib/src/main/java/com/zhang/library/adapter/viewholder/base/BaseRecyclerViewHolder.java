@@ -5,11 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.zhang.library.adapter.Adapter;
-
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.zhang.library.adapter.Adapter;
 
 /**
  * RecyclerView的基类ViewHolder
@@ -85,6 +85,17 @@ public abstract class BaseRecyclerViewHolder<T> extends RecyclerView.ViewHolder 
      * adapter position.
      */
     public void onViewRecycled() {
+    }
+
+    /**
+     * 绑定数据
+     *
+     * @param item     数据
+     * @param position 位置
+     */
+    public void bindData(T item, int position) {
+        onBindData(item, position);
+        onItemSelectChanged(item, position);
     }
 
     /**
