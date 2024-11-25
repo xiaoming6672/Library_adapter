@@ -5,6 +5,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.zhang.library.adapter.BaseRecyclerAdapter;
 import com.zhang.library.adapter.viewholder.EmptyViewHolder;
 import com.zhang.library.adapter.viewholder.base.BaseRecyclerViewHolder;
@@ -13,10 +17,6 @@ import com.zhang.library.library_adapter.R;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class BaseRvAdapterActivity extends AppCompatActivity {
 
@@ -72,7 +72,7 @@ public class BaseRvAdapterActivity extends AppCompatActivity {
          * @param viewType view类型
          */
         @Override
-        protected BaseRecyclerViewHolder<String> onCreateVHolder(ViewGroup parent, int viewType) {
+        protected BaseRecyclerViewHolder<String> onCreateVHolder(@NonNull ViewGroup parent, int viewType) {
             return new ViewHolder(parent);
         }
 

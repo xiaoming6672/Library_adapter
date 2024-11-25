@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+
 import com.zhang.library.adapter.annotation.ISuperViewHolder;
 import com.zhang.library.adapter.model.ISuperRecyclerModel;
 import com.zhang.library.adapter.viewholder.base.BaseRecyclerViewHolder;
@@ -59,7 +61,7 @@ public class SuperRecyclerAdapter<T>/*<T extends ISuperRecyclerModel>*/
     }
 
     @Override
-    protected BaseRecyclerViewHolder onCreateVHolder(ViewGroup parent, int viewType) {
+    protected BaseRecyclerViewHolder onCreateVHolder(@NonNull ViewGroup parent, int viewType) {
         Class<?> clazz = mViewHolderMap.get(viewType);
         if (clazz == null) {
             throw new IllegalArgumentException("No ViewHolder found! viewType=" + viewType);
@@ -72,7 +74,7 @@ public class SuperRecyclerAdapter<T>/*<T extends ISuperRecyclerModel>*/
     @Override
     protected void onBindData(BaseRecyclerViewHolder<T> viewHolder, T data, int position) {
         SuperViewHolder<T> holder = (SuperViewHolder<T>) viewHolder;
-        holder.onBindData(data, position);
+        holder.bindData(data, position);
     }
 
 

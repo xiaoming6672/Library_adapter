@@ -4,6 +4,10 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.zhang.library.adapter.callback.DataHolder;
 import com.zhang.library.adapter.callback.SelectManager;
 import com.zhang.library.adapter.holder.AdapterCallbackHolder;
@@ -17,10 +21,6 @@ import com.zhang.library.utils.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.CallSuper;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * RecyclerView的基类Adapter
@@ -558,7 +558,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         final int realPosition = getRealPosition(position);
         if (viewHolder instanceof HeaderViewHolder || viewHolder instanceof FooterViewHolder) {
             viewHolder.setAdapter(this);
-            viewHolder.onBindData(null, realPosition);
+            viewHolder.bindData(null, realPosition);
 
             return;
         }
@@ -568,7 +568,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
             viewHolder.itemView.setOnLongClickListener(v -> getCallbackHolder().notifyEmptyViewLongClick(v));
 
             viewHolder.setAdapter(this);
-            viewHolder.onBindData(null, realPosition);
+            viewHolder.bindData(null, realPosition);
             return;
         }
 
@@ -578,7 +578,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
         viewHolder.itemView.setOnLongClickListener(v -> getCallbackHolder().notifyItemLongClick(v, data, realPosition));
 
         viewHolder.setAdapter(this);
-        viewHolder.onBindData(data, realPosition);
+        viewHolder.bindData(data, realPosition);
         onBindData(viewHolder, data, realPosition);
     }
 
@@ -664,7 +664,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
      * @param parent   Item父控件
      * @param viewType view类型
      */
-    protected abstract BaseRecyclerViewHolder<T> onCreateVHolder(ViewGroup parent, int viewType);
+    protected abstract BaseRecyclerViewHolder<T> onCreateVHolder(@NonNull ViewGroup parent, int viewType);
 
     /**
      * 绑定填充数据
