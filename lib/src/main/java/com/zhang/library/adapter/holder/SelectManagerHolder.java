@@ -1,5 +1,7 @@
 package com.zhang.library.adapter.holder;
 
+import androidx.annotation.Nullable;
+
 import com.zhang.library.adapter.Adapter;
 import com.zhang.library.adapter.callback.DataHolder;
 import com.zhang.library.adapter.callback.SelectManager;
@@ -345,7 +347,7 @@ public class SelectManagerHolder<T> implements SelectManager<T>, DataHolder.Data
     }
 
     @Override
-    public void onDataChanged(int index, T data) {
+    public void onDataChanged(int index, T data, @Nullable Object payload) {
         updateItem(index, data);
     }
 

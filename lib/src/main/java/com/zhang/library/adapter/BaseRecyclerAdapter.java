@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.zhang.library.adapter.callback.DataHolder;
@@ -630,8 +631,8 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
 
     @Override
     @CallSuper
-    public void onDataChanged(int index, T data) {
-        notifyItemChanged(index);
+    public void onDataChanged(int index, T data, @Nullable Object payload) {
+        notifyItemChanged(index, payload);
     }
 
     @Override
