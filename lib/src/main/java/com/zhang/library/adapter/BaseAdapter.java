@@ -4,6 +4,9 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.zhang.library.adapter.callback.DataHolder;
 import com.zhang.library.adapter.callback.SelectManager;
 import com.zhang.library.adapter.holder.AdapterCallbackHolder;
@@ -12,8 +15,6 @@ import com.zhang.library.adapter.holder.SelectManagerHolder;
 import com.zhang.library.adapter.viewholder.base.BaseViewHolder;
 
 import java.util.List;
-
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * ListView/GridView的基类适配器
@@ -68,7 +69,7 @@ public abstract class BaseAdapter<T> extends android.widget.BaseAdapter implemen
                 }
 
                 @Override
-                public void onDataChanged(int index, T data) {
+                public void onDataChanged(int index, T data, @Nullable Object payload) {
                     notifyDataSetChanged();
                 }
 

@@ -1,5 +1,7 @@
 package com.zhang.library.adapter.callback;
 
+import androidx.annotation.Nullable;
+
 import java.util.List;
 
 /**
@@ -33,6 +35,8 @@ public interface DataHolder<T> {
 
     void updateData(final int index, final T data);
 
+    void updateData(final int index, final T data, @Nullable Object payload);
+
     void clearData();
 
     int size();
@@ -45,18 +49,18 @@ public interface DataHolder<T> {
 
     List<T> getDataList();
 
-   interface DataChangeCallback<T> {
+    interface DataChangeCallback<T> {
 
         void onDataChanged(List<T> list);
 
-        void onDataChanged(int index, T data);
+        void onDataChanged(int index, T data, @Nullable Object payload);
 
         void onDataAdded(int index, List<T> dataList);
 
         void onDataRemoved(int index, T data);
     }
 
-   interface DataTransform<T> {
+    interface DataTransform<T> {
         /**
          * 转换数据
          *

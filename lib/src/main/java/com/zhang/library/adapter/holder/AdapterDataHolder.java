@@ -2,14 +2,15 @@ package com.zhang.library.adapter.holder;
 
 import android.util.Pair;
 
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.zhang.library.adapter.callback.DataHolder;
 import com.zhang.library.utils.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * 适配器数据持有者
@@ -214,6 +215,11 @@ public class AdapterDataHolder<T> implements DataHolder<T> {
 
     @Override
     public void updateData(int index, T data) {
+        updateData(index, data, null);
+    }
+
+    @Override
+    public void updateData(int index, T data, @Nullable Object payload) {
         if (!CollectionUtils.isIndexLegal(mDataList, index)) {
             return;
         }
@@ -223,9 +229,8 @@ public class AdapterDataHolder<T> implements DataHolder<T> {
 
         ListIterator<DataChangeCallback<T>> listIterator = getDataChangeCallbackListIterator();
         while (listIterator.hasNext()) {
-            listIterator.next().onDataChanged(index, data);
+            listIterator.next().onDataChanged(index, data, payload);
         }
-
     }
 
     @Override
