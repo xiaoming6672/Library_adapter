@@ -13,6 +13,7 @@ import com.zhang.library.adapter.BaseRecyclerAdapter;
 import com.zhang.library.adapter.viewholder.EmptyViewHolder;
 import com.zhang.library.adapter.viewholder.base.BaseRecyclerViewHolder;
 import com.zhang.library.library_adapter.R;
+import com.zhang.library.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,10 @@ public class BaseRvAdapterActivity extends AppCompatActivity {
 
         RecyclerView rvContent = findViewById(R.id.rv_content);
         mAdapter = new Adapter();
+        mAdapter.getCallbackHolder().addOnItemClickCallback((view, data, position) -> {
+            LogUtils.debug("ZHANG", "data=%s", data);
+            mAdapter.getDataHolder().updateData(position, data + "0");
+        });
         rvContent.setAdapter(mAdapter);
     }
 

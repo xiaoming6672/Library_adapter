@@ -573,11 +573,10 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
             return;
         }
 
+        viewHolder.itemView.setOnClickListener(view -> getCallbackHolder().notifyItemClick(view, realPosition));
+        viewHolder.itemView.setOnLongClickListener(v -> getCallbackHolder().notifyItemLongClick(v, realPosition));
+
         final T data = getItemData(position);
-
-        viewHolder.itemView.setOnClickListener(view -> getCallbackHolder().notifyItemClick(view, data, realPosition));
-        viewHolder.itemView.setOnLongClickListener(v -> getCallbackHolder().notifyItemLongClick(v, data, realPosition));
-
         viewHolder.setAdapter(this);
         viewHolder.bindData(data, realPosition);
         onBindData(viewHolder, data, realPosition);
@@ -608,7 +607,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseRe
     @Override
     public AdapterCallbackHolder<T> getCallbackHolder() {
         if (mCallbackHolder == null) {
-            mCallbackHolder = new AdapterCallbackHolder<>();
+            mCallbackHolder = new AdapterCallbackHolder<>(this);
         }
         return mCallbackHolder;
     }
