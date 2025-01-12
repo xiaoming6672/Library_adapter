@@ -96,13 +96,22 @@ public class AdapterDataHolder<T> implements DataHolder<T> {
 
     @Override
     public void addData(int index, T data) {
-        if (!CollectionUtils.isIndexLegal(mDataList, index)) {
-            return;
+        if (mDataList == null) {
+            mDataList = new ArrayList<>();
         }
 
         data = transformData(data);
 
-        mDataList.add(index, data);
+        if (mDataList.isEmpty()) {
+            mDataList.add(data);
+            index = 0;
+        } else {
+            if (!CollectionUtils.isIndexLegal(mDataList, index)) {
+                return;
+            }
+
+            mDataList.add(index, data);
+        }
 
         List<T> list = new ArrayList<>(1);
         list.add(data);
@@ -135,15 +144,26 @@ public class AdapterDataHolder<T> implements DataHolder<T> {
 
     @Override
     public boolean addData(int index, List<? extends T> dataList) {
-        if (!CollectionUtils.isIndexLegal(mDataList, index) || CollectionUtils.isEmpty(dataList)) {
+        if (CollectionUtils.isEmpty(dataList))
             return false;
-        }
+
+        if (mDataList == null)
+            mDataList = new ArrayList<>();
 
         dataList = transformData(dataList);
-        boolean result = mDataList.addAll(index, dataList);
+
+        boolean result;
+        if (mDataList.isEmpty()) {
+            result = mDataList.addAll(dataList);
+        } else {
+            if (!CollectionUtils.isIndexLegal(mDataList, index)) {
+                return false;
+            }
+
+            result = mDataList.addAll(index, dataList);
+        }
 
         List<T> list = new ArrayList<>(dataList);
-
         ListIterator<DataChangeCallback<T>> listIterator = getDataChangeCallbackListIterator();
         while (listIterator.hasNext()) {
             listIterator.next().onDataAdded(index, list);
@@ -275,7 +295,7 @@ public class AdapterDataHolder<T> implements DataHolder<T> {
     @SuppressWarnings("unchecked")
     private List<T> transformData(List<? extends T> sourceList) {
         if (mDataTransform == null) {
-            return (List<T>) sourceList;
+            return sourceList == null ? new ArrayList<>() : (List<T>) sourceList;
         }
 
         if (CollectionUtils.isEmpty(sourceList))

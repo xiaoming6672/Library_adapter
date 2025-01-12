@@ -18,6 +18,16 @@ public class InfiniteRecyclerAdapter<VH extends RecyclerView.ViewHolder> extends
 
     private RecyclerView.Adapter<VH> mAdapter;
 
+    /** 无限列表最低要求数据数量 */
+    private final int infiniteMinCount;
+
+    public InfiniteRecyclerAdapter() {
+        this(1);
+    }
+
+    public InfiniteRecyclerAdapter(int minCount) {
+        infiniteMinCount = minCount;
+    }
 
     public void setAdapter(RecyclerView.Adapter<VH> adapter) {
         if (mAdapter == adapter)
@@ -55,7 +65,7 @@ public class InfiniteRecyclerAdapter<VH extends RecyclerView.ViewHolder> extends
             return 0;
 
         int itemCount = mAdapter.getItemCount();
-        if (itemCount <= 1)
+        if (itemCount <= infiniteMinCount)
             return itemCount;
 
         return Integer.MAX_VALUE;
