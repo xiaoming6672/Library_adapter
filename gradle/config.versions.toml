@@ -5,6 +5,6 @@ minSdk = "21"
 
 libGroupId = "com.lib.xiaoming"
 libArtifactId = "ktx"
-libVersionCode = "39"
-libVersionName = "2.5.1"
+libVersionCode = "40"
+libVersionName = "2.6.0"
 
