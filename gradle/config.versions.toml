@@ -3,8 +3,8 @@ compileSdk = "34"
 targetSdk = "34"
 minSdk = "21"
 
-libGroupId = "com.lib.xiaoming"
-libArtifactId = "ktx"
+libGroupId = "com.library.xiaoming6672"
+libArtifactId = "Library_adapter"
 libVersionCode = "40"
 libVersionName = "2.6.0"
 
