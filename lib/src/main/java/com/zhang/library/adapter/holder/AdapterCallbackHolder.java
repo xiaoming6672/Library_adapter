@@ -38,37 +38,6 @@ public class AdapterCallbackHolder<T> {
     }
 
     /**
-     * 设置点击回调监听
-     *
-     * @param itemClickCallback 点击回调监听
-     *
-     * @deprecated
-     */
-    public void setOnItemClickCallback(OnItemClickCallback<T> itemClickCallback) {
-        if (mOnItemClickCallbackList == null) {
-            mOnItemClickCallbackList = new ArrayList<>();
-        }
-
-        mOnItemClickCallbackList.add(itemClickCallback);
-    }
-
-
-    /**
-     * 设置长按回调监听
-     *
-     * @param itemLongClickCallback 长按回调监听
-     *
-     * @deprecated
-     */
-    public void setOnItemLongClickCallback(OnItemLongClickCallback<T> itemLongClickCallback) {
-        if (mOnItemLongClickCallbackList == null) {
-            mOnItemLongClickCallbackList = new ArrayList<>();
-        }
-
-        mOnItemLongClickCallbackList.add(itemLongClickCallback);
-    }
-
-    /**
      * 通知EmptyViewHolder点击事件
      *
      * @param view 控件

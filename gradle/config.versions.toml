@@ -1,0 +1,10 @@
+[versions]
+compileSdk = "34"
+targetSdk = "34"
+minSdk = "21"
+
+libGroupId = "com.lib.xiaoming"
+libArtifactId = "ktx"
+libVersionCode = "39"
+libVersionName = "2.5.1"
+
